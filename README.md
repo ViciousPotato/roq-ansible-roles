@@ -23,7 +23,7 @@ _Currently supporting Ubuntu, only._
 	* Install development tools (mostly focused on C-style languages).
 	* Default git configuration (system-wide).
 	* Default vim configuration, including useful plugins (system-wide).
-* Miniconda
+* Conda
 	* Install Miniconda2 (system-wide).
 
 ## How do I use it?
