@@ -1,0 +1,141 @@
+set viminfo=
+
+let mapleader = ","
+let g:mapleader = ","
+
+set number              " line numbers
+set nolist
+set nocompatible
+set backspace=2
+
+set modeline
+set cursorline          " current line
+set showmatch           " matching (), [] or {}
+set nowrap
+
+set tags=tags,.tags
+
+set colorcolumn=72
+
+filetype on
+filetype plugin indent on
+
+autocmd FileType python setl ts=4 sw=4 sts=4 et ai si ff=unix
+autocmd FileType clang setl ts=2 sw=2 sts=2 et ai si
+autocmd FileType cpp setl ts=2 sw=2 sts=2 et ai si
+autocmd FileType java setl ts=4 sw=4 sts=4 et ai si
+autocmd FileType ruby setl ts=2 sw=2 sts=2 noexpandtab
+autocmd FileType javascript setl ts=2 sw=2 sts=2 noexpandtab
+autocmd FileType html setl ts=2 sw=2 sts=2 noexpandtab
+autocmd FileType css setl ts=2 sw=2 sts=2 noexpandtab
+
+autocmd BufRead,BufNewFile *.conf setf dosini
+autocmd BufRead,BufNewFile *.service setf dosini
+
+set enc=utf-8
+set fenc=utf-8
+set termencoding=utf-8
+
+
+" not sure where all this belongs...
+let python_highlight_all = 1
+" enable folding
+set foldmethod=indent
+set foldlevel=99
+" folding using the spacebar
+nnoremap <space> za
+let g:SimpylFold_docstring_preview = 1
+
+
+" https://github.com/jnurmine/Zenburn
+
+set t_Co=256
+
+colors zenburn
+colorscheme zenburn
+let g:zenburn_alternate_Visual = 1
+let g:zenburn_alternate_Error = 1
+let g:zenburn_alternate_Include = 1
+
+
+" https://github.com/tpope/vim-pathogen
+
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
+filetype plugin indent on
+syntax on
+
+
+" https://github.com/scrooloose/syntastic
+" https://github.com/scrooloose/syntastic/blob/master/doc/syntastic.txt
+" requires: flake8 (pip)
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height = 5
+let g:syntastic_python_checkers=['flake8']
+let g:syntastic_python_flake8_args='--ignore=E501,E225'
+
+
+" https://github.com/vim-scripts/taglist.vim
+" http://vim-taglist.sourceforge.net/manual.html
+" requires: ctags (brew)
+
+let Tlist_Auto_Highlight_Tag = 1
+let Tlist_Auto_Open = 0
+let Tlist_Max_Tag_Length = 10
+let Tlist_Use_Right_Window   = 1
+" ctrl+n to toggle
+map <C-t> :TlistToggle<CR>
+
+
+" https://github.com/Valloric/YouCompleteMe
+" requires: cmake + ./install.py --clang-completer
+
+let g:ycm_autoclose_preview_window_after_completion = 1
+
+
+" https://github.com/vim-airline/vim-airline
+let w:airline_disabled = 0
+let g:airline_skip_empty_sections = 0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_splits = 1
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+
+
+" https://github.com/ctrlpvim/ctrlp.vim
+
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_regexp = 0
+let g:ctrlp_use_caching = 1
+
+
+" https://github.com/chase/vim-ansible-yaml
+"?
+
+
+" https://github.com/scrooloose/nerdtree
+" ctrl+n to toggle
+map <C-n> :NERDTreeToggle<CR>
+" open if no file was selected
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" close if last window
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+
+" https://github.com/rhysd/vim-clang-format
+" requires: clang-format (brew)
+
+autocmd FileType c ClangFormatAutoEnable
+
+
+" https://github.com/simeji/winresizer
+let g:winresizer_enable = 1

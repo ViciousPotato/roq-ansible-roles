@@ -1,0 +1,12 @@
+---
+
+# TODO(thraneh): change to ansible user
+
+- hosts: all
+  remote_user: root
+  become_user: root
+  roles:
+  - baseline
+  - sysadmin
+  - devtools
+  - miniconda

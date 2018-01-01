@@ -1,0 +1,174 @@
+---
+
+##########################################
+### CORE (AUTOCONF/AUTOMAKE/C/C++/...) ###
+##########################################
+
+- name: install build tools
+  become: true
+  apt: name="{{ item }}" state=present
+  with_items:
+  - build-essential
+  - gcc
+  - gdb
+  - autoconf
+  - autoconf-archive
+  - automake
+  - libtool
+  - cmake
+  - scons
+  - git
+  - exuberant-ctags
+  tags:
+  - devtools
+
+###########
+### GIT ###
+###########
+
+- name: create gitconfig
+  become: true
+  template: src="templates/gitconfig"
+    dest="/etc/gitconfig"
+    owner=root mode=0644
+  tags:
+  - devtools
+  - git
+
+###########
+### VIM ###
+###########
+
+# FIXME(thraneh): how do we find /usr/share/vim/vim[ver] ???
+
+- name: set default editor (debian)
+  become: true
+  alternatives: name="editor" path="/usr/bin/vim"
+  when: ansible_os_family == "Debian"
+  tags:
+  - devtools
+  - vim
+
+- name: install zenburn
+  become: true
+  get_url:
+    url="https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim"
+    dest="/usr/share/vim/vim74/colors/zenburn.vim"
+    owner=root mode=0644
+  tags:
+  - devtools
+  - vim
+
+- name: install pathogen
+  become: true
+  get_url:
+    url="https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim"
+    dest="/usr/share/vim/vim74/autoload/pathogen.vim"
+    owner=root mode=0644
+  tags:
+  - devtools
+  - vim
+
+- name: create bundle directory
+  become: true
+  file:
+    path="/usr/share/vim/vim74/bundle"
+    state=directory
+    owner=root
+    mode=0755
+  tags:
+  - devtools
+  - vim
+
+- name: install airline
+  become: true
+  git:
+    repo="https://github.com/vim-airline/vim-airline"
+    dest="/usr/share/vim/vim74/bundle/vim-airline"
+  tags:
+  - devtools
+  - vim
+
+- name: install winresizer
+  become: true
+  git:
+    repo="https://github.com/simeji/winresizer"
+    dest="/usr/share/vim/vim74/bundle/winresizer"
+  tags:
+  - devtools
+  - vim
+
+- name: install ctrlp
+  become: true
+  git:
+    repo="https://github.com/kien/ctrlp.vim"
+    dest="/usr/share/vim/vim74/bundle/ctrlp"
+  tags:
+  - devtools
+  - vim
+
+- name: install nerdtree
+  become: true
+  git:
+    repo="https://github.com/scrooloose/nerdtree"
+    dest="/usr/share/vim/vim74/bundle/nerdtree"
+  tags:
+  - devtools
+  - vim
+
+- name: install taglist
+  become: true
+  git:
+    repo="https://github.com/vim-scripts/taglist.vim"
+    dest="/usr/share/vim/vim74/bundle/taglist"
+  tags:
+  - devtools
+  - vim
+
+- name: install YouCompleteMe
+  become: true
+  git:
+    repo="https://github.com/Valloric/YouCompleteMe"
+    dest="/usr/share/vim/vim74/bundle/YouCompleteMe"
+  tags:
+  - devtools
+  - vim
+
+- name: install syntastic
+  become: true
+  git:
+    repo="https://github.com/scrooloose/syntastic"
+    dest="/usr/share/vim/vim74/bundle/syntastic"
+  tags:
+  - devtools
+  - vim
+
+- name: install vim-clang-format
+  become: true
+  git:
+    repo="https://github.com/rhysd/vim-clang-format"
+    dest="/usr/share/vim/vim74/bundle/vim-clang-format"
+  tags:
+  - devtools
+  - vim
+
+- name: install python-syntax
+  become: true
+  get_url: url="https://github.com/hdima/python-syntax/blob/master/syntax/python.vim"
+    dest="/usr/share/vim/vim74/syntax/python.vim"
+    owner=root mode=0644
+  tags:
+  - devtools
+  - vim
+
+# TODO(thraneh): a.vim
+# TODO(thraneh): vim-flake8
+
+- name: create vimrc
+  become: true
+  template: src="templates/vimrc"
+    dest="/etc/vim/vimrc.local"
+    owner=root mode=0644
+  tags:
+  - devtools
+  - vim

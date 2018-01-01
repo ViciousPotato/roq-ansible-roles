@@ -1,0 +1,24 @@
+[core]
+	autocrlf = false
+	whitespace = cr-at-eol
+	filemode = false
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	prompt = false
+
+[color]
+	ui = auto
+
+[alias]
+	s = status
+	b = branch
+	ch = checkout
+	d = difftool
+	l = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an %ar>%Creset' --abbrev-commit"
+	df = "diff-color"
+
+[push]
+	default = current
