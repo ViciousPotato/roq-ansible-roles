@@ -9,4 +9,5 @@
   - baseline
   - sysadmin
   - devtools
-  - miniconda
+  - nginx
+  - conda

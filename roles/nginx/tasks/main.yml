@@ -1,0 +1,31 @@
+---
+
+#############
+### NGINX ###
+#############
+
+- name: install nginx
+  become: true
+  apt: name=nginx state=latest
+  tags:
+  - nginx
+
+- name: create dist site
+  become: true
+  template: src="templates/dist"
+    dest="/etc/nginx/sites-available/dist"
+    owner=root mode=0644
+  notify:
+    - reload nginx
+  tags:
+  - nginx
+
+- name: enable dist site
+  become: true
+  file: src="/etc/nginx/sites-available/dist"
+    dest="/etc/nginx/sites-enabled/dist"
+    state=link
+  notify:
+    - reload nginx
+  tags:
+  - nginx
