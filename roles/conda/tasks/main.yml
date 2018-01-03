@@ -16,3 +16,11 @@
     mode: 0644
   tags:
     - conda
+
+- name: create .condarc
+  become: true
+  template: src="templates/condarc"
+    dest="/root/.condarc"
+    owner=root mode=0644
+  tags:
+  - conda
