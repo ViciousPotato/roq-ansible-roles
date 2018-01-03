@@ -39,3 +39,12 @@ Example
 
 	[TestVM]
 	test_vm ansible_host="1.2.3.4"
+
+## China?
+
+You might want to use mirrors to access various code repositories.
+
+Here some useful links
+
+* [Miniconda-latest-Linux-x86_64](https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh)
+* [conda-forge](https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/)
