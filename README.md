@@ -46,5 +46,5 @@ You might want to use mirrors to access various code repositories.
 
 Here some useful links
 
-* [Miniconda-latest-Linux-x86_64](https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh)
+* [Miniconda-latest-Linux-x86_64.sh](https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh)
 * [conda-forge](https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/)
