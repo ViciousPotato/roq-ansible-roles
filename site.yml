@@ -7,8 +7,20 @@
   become_user: root
   roles:
   - baseline
-  - infra
   - sysadmin
-  - devtools
-  - nginx
   - conda
+
+- hosts: trading
+  remote_user: root
+  become_user: root
+  roles:
+  - infra
+  - prometheus
+  - nginx
+  - redis
+
+- hosts: development
+  remote_user: root
+  become_user: root
+  roles:
+  - devtools

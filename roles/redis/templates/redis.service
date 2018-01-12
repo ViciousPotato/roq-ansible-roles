@@ -1,0 +1,16 @@
+[Unit]
+Description=Redis Server
+Requires=network.target syslog.socket
+
+[Service]
+Type=forking
+User=redis
+Group=redis
+PermissionsStartOnly=true
+PIDFile={{ redis_run_dir }}/redis.pid
+ExecStartPre=/bin/mkdir -p {{ redis_run_dir }} ; /bin/chown redis:redis {{ redis_run_dir }}
+ExecStart={{ redis_bin_dir }}/redis-server {{ redis_etc_dir }}/redis.conf
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

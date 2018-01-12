@@ -1,0 +1,9 @@
+---
+- name: restart redis
+  service: name=redis state=restarted enabled=yes
+
+- name: restart rsyslog
+  service: name=rsyslog state=restarted enabled=yes
+
+- name: reload rsyslog
+  service: name=rsyslog state=reloaded enabled=yes
