@@ -1,92 +1,100 @@
 ---
 
-###################
-### TIMEDATECTL ###
-###################
+- block:
 
-- name: test ntp
-  shell: bash -c '/usr/bin/timedatectl status | grep "Network time on. yes" > /dev/null'
-  register: timedatectl_ntp
-  changed_when: timedatectl_ntp.rc == 1
-  failed_when: timedatectl_ntp.rc > 1
-  tags:
-  - sysadmin
-  - timedatectl
+  ###################
+  ### TIMEDATECTL ###
+  ###################
 
-- name: enable ntp
+  - name: test ntp
+    shell: bash -c '/usr/bin/timedatectl status | grep "Network time on. yes" > /dev/null'
+    register: timedatectl_ntp
+    changed_when: timedatectl_ntp.rc == 1
+    failed_when: timedatectl_ntp.rc > 1
+    tags:
+    - sysadmin
+    - timedatectl
+
+  - name: enable ntp
+    command: /usr/bin/timedatectl set-ntp true
+    when: timedatectl_ntp.rc != 0
+    tags:
+    - sysadmin
+    - timedatectl
+
+  ###############
+  ### SYSSTAT ###
+  ###############
+
+  - name: install tools
+    apt:
+      name: sysstat
+      state: installed
+    tags:
+    - sysadmin
+    - sysstat
+
+  - name: enable sysstat
+    replace:
+      dest: '/etc/default/sysstat' 
+      regexp: 'ENABLED="false"'
+      replace: 'ENABLED="true"'
+    notify:
+      - restart sysstat
+    tags:
+    - sysadmin
+    - sysstat
+
+  #############
+  ### TOOLS ###
+  #############
+
+  - name: install tools
+    apt:
+      name: "{{ item }}"
+      state: installed
+    with_items:
+      - htop
+      - iotop
+      - iftop
+      - nethogs
+      - dstat
+      - lsof
+      - wget
+      - curl
+      - vim
+      - bash-completion
+      - mailutils
+      - traceroute
+      - whois
+      - daemon
+    tags:
+    - sysadmin
+    - tools
+
+  ############
+  ### BASH ###
+  ############
+
+  - name: bash profile -- default editor + avoid history leaks
+    template:
+      src: "templates/profile.sh"
+      dest: "/etc/profile.d/00-aliases.sh"
+      owner: root
+      mode: 0644
+    tags:
+    - sysadmin
+    - bash
+
+  ###########################
+  ### UNATTENDED-UPGRADES ###
+  ###########################
+
+  - name: unattended-upgrades
+    apt:
+      name: unattended-upgrades
+      state: installed
+    tags:
+    - sysadmin
+
   become: true
-  command: /usr/bin/timedatectl set-ntp true
-  when: timedatectl_ntp.rc != 0
-  tags:
-  - sysadmin
-  - timedatectl
-
-###############
-### SYSSTAT ###
-###############
-
-- name: install tools
-  become: true
-  apt: name=sysstat state=installed
-  tags:
-  - sysadmin
-  - sysstat
-
-- name: enable sysstat
-  become: true
-  replace: dest='/etc/default/sysstat' 
-    regexp='ENABLED="false"'
-    replace='ENABLED="true"'
-  notify:
-    - restart sysstat
-  tags:
-  - sysadmin
-  - sysstat
-
-#############
-### TOOLS ###
-#############
-
-- name: install tools
-  become: true
-  apt: name="{{ item }}" state=installed
-  with_items:
-    - htop
-    - iotop
-    - iftop
-    - nethogs
-    - dstat
-    - lsof
-    - wget
-    - curl
-    - vim
-    - bash-completion
-    - mailutils
-    - traceroute
-    - whois
-    - daemon
-  tags:
-  - sysadmin
-  - tools
-
-############
-### BASH ###
-############
-
-- name: bash profile -- default editor + avoid history leaks
-  become: true
-  template: src="templates/profile.sh"
-    dest="/etc/profile.d/00-aliases.sh"
-    owner=root mode=0644
-  tags:
-  - sysadmin
-  - bash
-
-###########################
-### UNATTENDED-UPGRADES ###
-###########################
-
-- name: unattended-upgrades
-  apt: name=unattended-upgrades state=installed
-  tags:
-  - sysadmin

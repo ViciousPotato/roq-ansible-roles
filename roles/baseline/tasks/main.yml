@@ -1,14 +1,18 @@
 ---
 
+- block:
+
 ###########
 ### APT ###
 ###########
 
-- name: update and upgrade apt packages
+  - name: update and upgrade apt packages
+    become: true
+    apt:
+      upgrade: dist
+      update_cache: yes
+      cache_valid_time: 86400 #One day
+    tags:
+    - baseline
+
   become: true
-  apt:
-    upgrade: dist
-    update_cache: yes
-    cache_valid_time: 86400 #One day
-  tags:
-  - baseline

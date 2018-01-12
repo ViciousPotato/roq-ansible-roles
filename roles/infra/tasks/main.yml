@@ -1,57 +1,61 @@
 ---
 
-- name: add groups
-  group:
-    name: "{{ item }}"
-    state: present
-  with_items:
-  - trading
-  - algo
-  tags:
-  - infra
+- block:
 
-- name: add users
-  user:
-    name: "{{ item }}"
-    system: yes
-    group: "{{ item }}"
-  with_items:
-  - trading
-  - algo
-  tags:
-  - infra
+  - name: add groups
+    group:
+      name: "{{ item }}"
+      state: present
+    with_items:
+    - trading
+    - algo
+    tags:
+    - infra
 
-- name: create trading directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: trading
-    group: trading
-    mode: 0777
-  with_items:
-  - /trading
-  - /trading/capture
-  - /trading/config
-  - /trading/logs
-  - /trading/infra
-  - /trading/infra/bin
-  - /trading/infra/run
-  tags:
-  - infra
+  - name: add users
+    user:
+      name: "{{ item }}"
+      system: yes
+      group: "{{ item }}"
+    with_items:
+    - trading
+    - algo
+    tags:
+    - infra
 
-- name: create algo directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: algo
-    group: algo
-    mode: 0777
-  with_items:
-  - /algo
-  - /algo/config
-  - /algo/logs
-  - /algo/infra
-  - /algo/infra/bin
-  - /algo/infra/run
-  tags:
-  - infra
+  - name: create trading directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: trading
+      group: trading
+      mode: 0777
+    with_items:
+    - /trading
+    - /trading/capture
+    - /trading/config
+    - /trading/logs
+    - /trading/infra
+    - /trading/infra/bin
+    - /trading/infra/run
+    tags:
+    - infra
+
+  - name: create algo directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: algo
+      group: algo
+      mode: 0777
+    with_items:
+    - /algo
+    - /algo/config
+    - /algo/logs
+    - /algo/infra
+    - /algo/infra/bin
+    - /algo/infra/run
+    tags:
+    - infra
+
+  become: true

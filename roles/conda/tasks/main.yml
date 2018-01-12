@@ -1,26 +1,44 @@
 ---
 
-#################
-### MINICONDA ###
-#################
+- block:
 
-# https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
-# https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh
+  #################
+  ### MINICONDA ###
+  #################
 
-- name: install miniconda2
-  become: true
-  get_url:
-    url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh"
-    dest: "/root/Miniconda-latest-Linux-x86_64.sh"
-    owner: root
-    mode: 0644
-  tags:
+  # https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+  # https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh
+
+  - name: install miniconda2
+    get_url:
+      url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
+      dest: /opt
+      owner: root
+      mode: 0755
+    with_items:
+    - "Miniconda2-latest-Linux-x86_64.sh"
+    - "Miniconda3-latest-Linux-x86_64.sh"
+    tags:
+      - conda
+
+  - name: update consoles symlink
+    file:
+      src: "/opt/{{ item }}"
+      dest: "/usr/local/bin/{{ item }}"
+      state: link
+    with_items:
+    - "Miniconda2-latest-Linux-x86_64.sh"
+    - "Miniconda3-latest-Linux-x86_64.sh"
+    tags:
     - conda
 
-- name: create .condarc
+  - name: create .condarc
+    template:
+      src: "templates/condarc"
+      dest: "/root/.condarc"
+      owner: root
+      mode: 0644
+    tags:
+    - conda
+
   become: true
-  template: src="templates/condarc"
-    dest="/root/.condarc"
-    owner=root mode=0644
-  tags:
-  - conda
