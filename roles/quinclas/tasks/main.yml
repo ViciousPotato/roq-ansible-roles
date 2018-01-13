@@ -1,0 +1,89 @@
+---
+
+- block:
+
+  - name: gateway daemon control scripts
+    template:
+      src: "templates/quinclas-gateway.sh"
+      dest: "/trading/infra/bin/quinclas-{{ item }}.sh"
+      owner: trading
+      group: trading
+      mode: 0755
+    with_items:
+      - "{{ gateways }}"
+    tags:
+    - quinclas
+
+  - name: create run directories
+    file:
+      path: "/trading/infra/run/{{ item }}"
+      state: directory
+      owner: trading
+      group: trading
+    with_items:
+      - "{{ gateways }}"
+    tags:
+    - quinclas
+
+# TODO: change user to trading
+# TODO: time-zones ???
+
+  - name: create crontab for gateway start
+    cron:
+      name: "quinclas-{{ item }}-start"
+      weekday: "1-5"
+      hour: 9
+      minute: 14
+      job: "/trading/infra/bin/quinclas-{{ item }}.sh --start >/dev/null 2>&1"
+      user: root
+    with_items:
+      - "{{ gateways }}"
+    tags:
+    - quinclas
+
+  - name: create crontab for gateway stop
+    cron:
+      name: "quinclas-{{ item }}-stop"
+      weekday: "1-5"
+      hour: 15
+      minute: 16
+      job: "/trading/infra/bin/quinclas-{{ item }}.sh --stop >/dev/null 2>&1"
+      user: root
+    with_items:
+      - "{{ gateways }}"
+    tags:
+    - quinclas
+
+  - name: collector daemon control script
+    template:
+      src: "templates/example-collector.sh"
+      dest: "/trading/infra/bin/example-collector.sh"
+      owner: trading
+      group: trading
+      mode: 0755
+    tags:
+    - quinclas
+
+  - name: create crontab for collector start
+    cron:
+      name: "example-collector-start"
+      weekday: "1-5"
+      hour: 9
+      minute: 14
+      job: "/trading/infra/bin/example-collector.sh --start >/dev/null 2>&1"
+      user: root
+    tags:
+    - quinclas
+
+  - name: create crontab for collector stop
+    cron:
+      name: "example-collector-stop"
+      weekday: "1-5"
+      hour: 15
+      minute: 16
+      job: "/trading/infra/bin/example-collector.sh --stop >/dev/null 2>&1"
+      user: root
+    tags:
+    - quinclas
+
+  become: true

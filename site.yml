@@ -18,6 +18,7 @@
   - prometheus
   - nginx
   - redis
+  - quinclas
 
 - hosts: development
   remote_user: root
