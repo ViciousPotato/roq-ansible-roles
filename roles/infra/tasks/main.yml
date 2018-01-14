@@ -23,38 +23,36 @@
     tags:
     - infra
 
-  - name: create trading directories
+  - name: create directories for trading
     file:
       path: "{{ item }}"
       state: directory
       owner: trading
       group: trading
-      mode: 0777
+      mode: 0750
     with_items:
     - /trading
-    - /trading/capture
     - /trading/config
+    - /trading/bin
+    - /trading/run
     - /trading/logs
     - /trading/infra
-    - /trading/infra/bin
-    - /trading/infra/run
+    - /trading/data
     tags:
     - infra
 
-  - name: create algo directories
+  - name: create directories for algo
     file:
       path: "{{ item }}"
       state: directory
       owner: algo
       group: algo
-      mode: 0777
+      mode: 0750
     with_items:
     - /algo
     - /algo/config
+    - /algo/bin
     - /algo/logs
-    - /algo/infra
-    - /algo/infra/bin
-    - /algo/infra/run
     tags:
     - infra
 

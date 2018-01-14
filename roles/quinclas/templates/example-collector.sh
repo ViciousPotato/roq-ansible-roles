@@ -6,9 +6,9 @@ set -e
 CONDA_DIR="/trading/infra/miniconda2"
 LOG_DIR="/trading/logs"
 SOCKET="/var/tmp/femas.sock"
-PIDFILE="/trading/infra/run/.collector.pid"
-CHDIR="/trading/infra/run/collector"
-STDOUT="/trading/capture/collector.tick"
+PIDFILE="/trading/run/.collector.pid"
+CHDIR="/trading/run/collector"
+STDOUT="/trading/data/collector.tick"
 
 # Parse options
 while [[ $# -gt 0 ]]

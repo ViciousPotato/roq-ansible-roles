@@ -2,24 +2,25 @@
 
 - block:
 
-  - name: gateway daemon control scripts
+  - name: create daemon control scripts for gateways
     template:
       src: "templates/quinclas-gateway.sh"
-      dest: "/trading/infra/bin/quinclas-{{ item }}.sh"
+      dest: "/trading/bin/quinclas-{{ item }}.sh"
       owner: trading
       group: trading
-      mode: 0755
+      mode: 0750
     with_items:
       - "{{ gateways }}"
     tags:
     - quinclas
 
-  - name: create run directories
+  - name: create run directories for gateways
     file:
-      path: "/trading/infra/run/{{ item }}"
+      path: "/trading/run/{{ item }}"
       state: directory
       owner: trading
       group: trading
+      mode: 0750
     with_items:
       - "{{ gateways }}"
     tags:
@@ -28,61 +29,71 @@
 # TODO: change user to trading
 # TODO: time-zones ???
 
-  - name: create crontab for gateway start
+  - name: create crontab entries for starting gateways
     cron:
       name: "quinclas-{{ item }}-start"
       weekday: "1-5"
       hour: 9
       minute: 14
-      job: "/trading/infra/bin/quinclas-{{ item }}.sh --start >/dev/null 2>&1"
-      user: root
+      job: "/trading/bin/quinclas-{{ item }}.sh --start >/dev/null 2>&1"
+      user: trading
     with_items:
       - "{{ gateways }}"
     tags:
     - quinclas
 
-  - name: create crontab for gateway stop
+  - name: create crontab entries for stopping gateway
     cron:
       name: "quinclas-{{ item }}-stop"
       weekday: "1-5"
       hour: 15
       minute: 16
-      job: "/trading/infra/bin/quinclas-{{ item }}.sh --stop >/dev/null 2>&1"
-      user: root
+      job: "/trading/bin/quinclas-{{ item }}.sh --stop >/dev/null 2>&1"
+      user: trading
     with_items:
       - "{{ gateways }}"
     tags:
     - quinclas
 
-  - name: collector daemon control script
+  - name: create daemon control script for collector
     template:
       src: "templates/example-collector.sh"
-      dest: "/trading/infra/bin/example-collector.sh"
+      dest: "/trading/bin/example-collector.sh"
       owner: trading
       group: trading
-      mode: 0755
+      mode: 0750
     tags:
     - quinclas
 
-  - name: create crontab for collector start
+  - name: create run directory for collector
+    file:
+      path: "/trading/run/collector"
+      state: directory
+      owner: trading
+      group: trading
+      mode: 0750
+    tags:
+    - quinclas
+
+  - name: create crontab entry for starting collector
     cron:
       name: "example-collector-start"
       weekday: "1-5"
       hour: 9
       minute: 14
-      job: "/trading/infra/bin/example-collector.sh --start >/dev/null 2>&1"
-      user: root
+      job: "/trading/bin/example-collector.sh --start >/dev/null 2>&1"
+      user: trading
     tags:
     - quinclas
 
-  - name: create crontab for collector stop
+  - name: create crontab entry for stopping collector
     cron:
       name: "example-collector-stop"
       weekday: "1-5"
       hour: 15
       minute: 16
-      job: "/trading/infra/bin/example-collector.sh --stop >/dev/null 2>&1"
-      user: root
+      job: "/trading/bin/example-collector.sh --stop >/dev/null 2>&1"
+      user: trading
     tags:
     - quinclas
 

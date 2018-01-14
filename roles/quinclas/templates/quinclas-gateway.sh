@@ -7,8 +7,8 @@ CONDA_DIR="/trading/infra/miniconda2"
 LOG_DIR="/trading/logs"
 CONFIG="/trading/config/{{ item }}.conf"
 SOCKET="/var/tmp/{{ item }}.sock"
-PIDFILE="/trading/infra/run/.{{ item }}.pid"
-CHDIR="/trading/infra/run/{{ item }}"
+PIDFILE="/trading/run/.{{ item }}.pid"
+CHDIR="/trading/run/{{ item }}"
 
 # Parse options
 while [[ $# -gt 0 ]]
