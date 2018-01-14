@@ -7,16 +7,12 @@ Copyright (c) 2017-2018, Hans Erik Thrane
 
 ## What is it?
 
-Ansible provisioning of Ubuntu 16.04 VMs.
+`ansible-playbook` for quick deployment of trading and/or development configuration to a Ubuntu 16.04 host.
 
-Helps you to quickly deploy Quinclas trading and/or development hosts.
-
-## Do I have to use it?
+## Is it required?
 
 No.
-
 It's a default configuration meant to help you get started quickly.
-The Quinclas tool-chain doesn't require this setup.
 
 ## What does it do?
 
