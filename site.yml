@@ -15,9 +15,10 @@
   become_user: root
   roles:
   - infra
+  - consul
   - prometheus
-  - nginx
   - redis
+  - nginx
   - quinclas
 
 - hosts: development

@@ -1,35 +1,48 @@
-# Ansible Playbook
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+# Provisioning.
 
 Copyright (c) 2017-2018, Hans Erik Thrane
 
 ## What is it?
 
-Playbook to provision Ubuntu 16.04 VMs.
+Ansible provisioning of Ubuntu 16.04 VMs.
+
+Helps you to quickly deploy Quinclas trading and/or development hosts.
+
+## Do I have to use it?
+
+No.
+
+It's a default configuration meant to help you get started quickly.
+The Quinclas tool-chain doesn't require this setup.
 
 ## What does it do?
 
 * Baseline (all hosts)
-	* Update and upgrade installed packages.
+	* Update and upgrade already installed system packages.
 * Sysadmin (all hosts)
 	* Install sysadmin command-line tools.
 	* Enable NTP.
 	* Install and enable sysstat.
 	* Install useful sysadmin command-line tools.
 	* Do NOT capture bash history (for security reasons).
-	* Enable automatic system updates (for security reasons).
+	* Enable automatic system updates (for security reasons, not necessarily good for stabilty).
 * Conda (all hosts)
 	* Install the Miniconda2 package manager (system-wide).
 * Infra (trading hosts)
-	* Create trading user/group (for software deployment).
-	* Create algo user/group (for strategy deployment).
+	* Create trading user/group (for the deployment of software).
+	* Create algo user/group (for the deployment of your strategies).
+* Consul (trading hosts)
+	* Install the Consul service discovery and configuration agent.
 * Prometheus (trading hosts)
 	* Install the Prometheus monitoring system and time-series database.
-* Netdata (trading hosts)
-	* Install the netdata real-time performance and monitoring system.
-* Nginx (trading hosts)
-	* Install the Nginx reverse proxy server.
 * Redis (trading hosts)
 	* Install the Redis in-memory database.
+* Nginx (trading hosts)
+	* Install the Nginx reverse proxy server.
+* Quinclas (trading hosts)
+	* Install and configure user required gateways.
 * Devtools (development hosts)
 	* Install development tools (mostly focused on C-style languages).
 	* Default git configuration (system-wide).
@@ -47,7 +60,7 @@ Follow the guidelines from [here](http://docs.ansible.com/ansible/latest/intro_i
 Example
 
 	[TestVM]
-	test_vm ansible_host="1.2.3.4"
+	test_vm ansible_host="1.2.3.4" gateways='["femasapi"]'
 
 	[trading:children]
 	TestVM

@@ -68,6 +68,8 @@
       - traceroute
       - whois
       - daemon
+      - zip
+      - unzip
     tags:
     - sysadmin
     - tools
