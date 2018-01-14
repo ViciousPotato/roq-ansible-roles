@@ -32,7 +32,7 @@ done
 # Daemonize
 case $TYPE in
   start)
-  source "$CONDA_DIR/bin/activate"
+  source "$CONDA_DIR/bin/activate" quinclas
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe \

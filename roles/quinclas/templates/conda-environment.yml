@@ -1,0 +1,5 @@
+name: quinclas
+dependencies:
+{% for gateway in gateways %}
+  - quinclas-{{ gateway }}
+{% endfor %}

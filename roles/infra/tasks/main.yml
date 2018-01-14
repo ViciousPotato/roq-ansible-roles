@@ -56,4 +56,12 @@
     tags:
     - infra
 
+  - name: create miniconda2 environment
+    shell: /usr/local/bin/Miniconda2-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda2
+    args:
+      creates: /trading/infra/miniconda2
+    become_user: trading
+    tags:
+    - infra
+
   become: true

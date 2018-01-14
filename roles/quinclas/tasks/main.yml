@@ -2,6 +2,31 @@
 
 - block:
 
+  - name: create conda environment file
+    template:
+      src: "templates/conda-environment.yml"
+      dest: "/trading/infra/conda-environment.yml"
+      owner: trading
+      group: trading
+      mode: 0640
+    tags:
+    - quinclas
+
+  - name: test existence of the quinclas conda environment
+    shell: /trading/infra/miniconda2/bin/conda env list | grep "^quinclas "
+    register: conda_quinclas
+    failed_when: ( conda_quinclas.rc not in [ 0, 1 ] )
+    become_user: trading
+    tags:
+    - quinclas
+
+  - name: create the quinclas conda environment
+    shell: /trading/infra/miniconda2/bin/conda env create -f /trading/infra/conda-environment.yml
+    when: conda_quinclas.rc == 1
+    become_user: trading
+    tags:
+    - quinclas
+
   - name: create daemon control scripts for gateways
     template:
       src: "templates/quinclas-gateway.sh"
