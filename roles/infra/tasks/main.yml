@@ -64,4 +64,13 @@
     tags:
     - infra
 
+  - name: create condarc in the miniconda2 environment
+    template:
+      src: "templates/condarc"
+      dest: "/trading/infra/miniconda2/.condarc"
+      owner: trading
+      mode: 0644
+    tags:
+    - infra
+
   become: true
