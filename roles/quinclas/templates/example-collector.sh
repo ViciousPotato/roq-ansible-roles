@@ -5,7 +5,7 @@ set -e
 # Configuration
 CONDA_DIR="/trading/infra/miniconda2"
 LOG_DIR="/trading/logs"
-SOCKET="/var/tmp/femas.sock"
+SOCKET="/var/tmp/femasapi.sock"
 PIDFILE="/trading/run/.collector.pid"
 CHDIR="/trading/run/collector"
 STDOUT="/trading/data/collector.tick"
