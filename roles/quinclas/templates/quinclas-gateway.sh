@@ -37,7 +37,7 @@ case $TYPE in
   export GLOG_minloglevel=0
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" \
-      --name quinclas_{{ item }} --monitor-port "{{ gateway_ports[item] }}"
+      --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
