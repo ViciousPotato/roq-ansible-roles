@@ -35,8 +35,9 @@ case $TYPE in
   source "$CONDA_DIR/bin/activate" quinclas
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
-  /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe \
-      -- "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" --monitor-port "{{ gateway_ports[item] }}"
+  /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
+      "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" \
+      --name quinclas_{{ item }} --monitor-port "{{ gateway_ports[item] }}"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
