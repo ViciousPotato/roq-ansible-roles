@@ -46,6 +46,8 @@ It's a default configuration meant to help you get started quickly.
 	* Install development tools (mostly focused on C-style languages).
 	* Default git configuration (system-wide).
 	* Default vim configuration, including useful plugins (system-wide).
+* Netdata (trading hosts)
+  * Install the Netdata real-time performance and health-monitoring system.
 
 ## How do I use it?
 
