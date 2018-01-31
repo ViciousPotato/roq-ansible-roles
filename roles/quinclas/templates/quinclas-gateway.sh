@@ -37,6 +37,7 @@ case $TYPE in
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
   export GLOG_v=0
+  export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" \
       --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}" --nice "$NICE"

@@ -26,7 +26,7 @@ It's a default configuration meant to help you get started quickly.
 	* Do NOT capture bash history (for security reasons).
 	* Enable automatic system updates (for security reasons, not necessarily good for stabilty).
 * Tuning (trading hosts)
-  * Kernel configuration (/etc/sysctl.conf)
+  * Kernel configuration (/etc/sysctl.conf).
 * Conda (all hosts)
 	* Install the Miniconda2 package manager (system-wide).
 * Infra (trading hosts)
