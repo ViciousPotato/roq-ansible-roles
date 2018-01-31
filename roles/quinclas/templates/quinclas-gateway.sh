@@ -9,7 +9,6 @@ CONFIG="/trading/config/{{ item }}.conf"
 SOCKET="/var/tmp/{{ item }}.sock"
 PIDFILE="/trading/run/.{{ item }}.pid"
 CHDIR="/trading/run/{{ item }}"
-NICE="-10"
 
 # Parse options
 while [[ $# -gt 0 ]]
@@ -40,7 +39,7 @@ case $TYPE in
   export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" \
-      --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}" --nice "$NICE"
+      --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
