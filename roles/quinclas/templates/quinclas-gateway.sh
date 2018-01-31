@@ -9,6 +9,7 @@ CONFIG="/trading/config/{{ item }}.conf"
 SOCKET="/var/tmp/{{ item }}.sock"
 PIDFILE="/trading/run/.{{ item }}.pid"
 CHDIR="/trading/run/{{ item }}"
+NICE="-10"
 
 # Parse options
 while [[ $# -gt 0 ]]
@@ -35,9 +36,10 @@ case $TYPE in
   source "$CONDA_DIR/bin/activate" quinclas
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
+  export GLOG_v=0
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" \
-      --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}"
+      --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}" --nice "$NICE"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
