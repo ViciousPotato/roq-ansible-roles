@@ -143,7 +143,7 @@
       dest: "/etc/systemd/system/node_exporter.service"
       owner: root
       group: root
-      model: 0644
+      mode: 0644
     register: node_exporter_service
     notify:
     - restart node_exporter

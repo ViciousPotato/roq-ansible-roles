@@ -9,10 +9,10 @@
   # https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
   # https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh
 
-  - name: install miniconda2
+  - name: install miniconda
     get_url:
       url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
-      dest: /opt
+      dest: "/opt"
       owner: root
       mode: 0755
     with_items:
@@ -21,7 +21,7 @@
     tags:
       - conda
 
-  - name: update consoles symlink
+  - name: create symlink
     file:
       src: "/opt/{{ item }}"
       dest: "/usr/local/bin/{{ item }}"

@@ -56,15 +56,15 @@
     tags:
     - infra
 
-  - name: create miniconda2 environment
+  - name: create conda environment
     shell: /usr/local/bin/Miniconda2-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda2
     args:
-      creates: /trading/infra/miniconda2
+      creates: "/trading/infra/miniconda2"
     become_user: trading
     tags:
     - infra
 
-  - name: create condarc in the miniconda2 environment
+  - name: create .condarc in the conda environment
     template:
       src: "templates/condarc"
       dest: "/trading/infra/miniconda2/.condarc"

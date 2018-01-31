@@ -6,7 +6,7 @@
 
 - block:
 
-  - name: sysctl
+  - name: update sysctl.conf (very aggressive settings)
     sysctl:
       name: "{{ item.name }}"
       value: "{{ item.value }}"
