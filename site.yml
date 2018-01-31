@@ -21,6 +21,7 @@
   - redis
   - nginx
   - quinclas
+  - netdata
 
 - hosts: development
   remote_user: root

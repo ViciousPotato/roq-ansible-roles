@@ -1,0 +1,27 @@
+---
+
+- block:
+
+  ###############
+  ### NETDATA ###
+  ###############
+
+  # https://github.com/firehol/netdata/wiki/Installation
+
+  - name: download netdata
+    get_url:
+      url: "https://my-netdata.io/kickstart.sh"
+      dest: /opt
+      owner: root
+      mode: 0755
+    tags:
+      - netdata
+
+  - name: install netdata
+    script: "/opt/kickstart.sh"
+    args:
+      creates: "/usr/sbin/netdata"
+    tags:
+    - netdata
+
+  become: true
