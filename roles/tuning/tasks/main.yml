@@ -1,0 +1,26 @@
+---
+
+# https://medium.com/@frjalex/linux-kernel-high-performance-networking-how-to-2d35f5900974
+# https://serverfault.com/questions/623780/low-latency-tcp-settings-on-ubuntu
+# https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/2/html/Realtime_Tuning_Guide/index.html
+
+- block:
+
+  - name: sysctl
+    sysctl:
+      name: "{{ item.0 }}"
+      value: "{{ item.1 }}"
+    with_items:
+    - [ "net.core.rmem_max", "1342177280" ]
+    - [ "net.core.wmem_max", "1342177280" ]
+    - [ "net.ipv4.tcp_rmem", "163840 3495200 268754560" ]
+    - [ "net.ipv4.tcp_wmem", "163840 3495200 268754560" ]
+    - [ "net.ipv4.udp_rmem_min", "163840 3495200 268754560" ]
+    - [ "net.ipv4.udp_wmem_min", "163840 3495200 268754560" ]
+    - [ "net.ipv4.tcp_mem", "268754560 268754560 268754560" ]
+    - [ "net.ipv4.udp_mem", "268754560 268754560 268754560" ]
+    - [ "net.core.netdev_max_backlog", "300000" ]
+    tags:
+    - tuning
+
+  become: true

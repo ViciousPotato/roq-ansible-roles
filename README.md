@@ -25,6 +25,8 @@ It's a default configuration meant to help you get started quickly.
 	* Install useful sysadmin command-line tools.
 	* Do NOT capture bash history (for security reasons).
 	* Enable automatic system updates (for security reasons, not necessarily good for stabilty).
+* Tuning (trading hosts)
+  * Kernel configuration (/etc/sysctl.conf)
 * Conda (all hosts)
 	* Install the Miniconda2 package manager (system-wide).
 * Infra (trading hosts)
