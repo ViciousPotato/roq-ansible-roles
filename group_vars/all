@@ -9,6 +9,12 @@ gateway_ports:
   qq_femasapi: 12346
   coinbase_gdax: 12347
 
+###########
+### VIM ###
+###########
+
+vim_version: "74"
+
 ##############
 ### CONSUL ###
 ##############
