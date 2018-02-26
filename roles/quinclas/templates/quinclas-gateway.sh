@@ -5,7 +5,9 @@ set -e
 # Configuration
 CONDA_DIR="/trading/infra/miniconda2"
 LOG_DIR="/trading/logs"
+VARIABLES="/trading/config/instruments.conf"
 CONFIG="/trading/config/{{ item }}.conf"
+LICENSE="/trading/config/license.conf"
 SOCKET="/var/tmp/{{ item }}.sock"
 PIDFILE="/trading/run/.{{ item }}.pid"
 CHDIR="/trading/run/{{ item }}"
@@ -38,8 +40,13 @@ case $TYPE in
   export GLOG_v=0
   export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
-      "$CONDA_PREFIX/bin/quinclas-{{ item }}" --config "$CONFIG" --local-address "$SOCKET" \
-      --name "quinclas_{{ item }}" --monitor-port "{{ gateway_ports[item] }}"
+      "$CONDA_PREFIX/bin/quinclas-{{ item }}" \
+      --license-file "$LICENSE" \
+      --config-variables "$VARIABLES" \
+      --config-file "$CONFIG" \
+      --local-address "$SOCKET" \
+      --monitor-port "{{ gateway_ports[item] }}" \
+      --name "quinclas_{{ item }}"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
