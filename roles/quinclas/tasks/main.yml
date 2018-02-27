@@ -12,6 +12,12 @@
     tags:
     - quinclas
 
+  - name: update conda
+    shell: /trading/infra/miniconda2/bin/conda update -n base conda
+    become_user: trading
+    tags:
+    - quinclas
+
   - name: test existence of the quinclas conda environment
     shell: /trading/infra/miniconda2/bin/conda env list | grep "^quinclas "
     register: conda_quinclas
