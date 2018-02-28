@@ -41,6 +41,7 @@ case $TYPE in
   export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/quinclas-{{ item }}" \
+      --socket-buffer-size 10485760 \
       --license-file "$LICENSE" \
       --config-variables "$VARIABLES" \
       --config-file "$CONFIG" \
