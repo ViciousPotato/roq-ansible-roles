@@ -42,7 +42,7 @@ case $TYPE in
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/quinclas-{{ item }}" \
       --socket-buffer-size 10485760 \
-      --spin-usecs 10 \
+      --spin-usecs 10000 \
       --test-query 0 \
       --license-file "$LICENSE" \
       --config-variables "$VARIABLES" \
