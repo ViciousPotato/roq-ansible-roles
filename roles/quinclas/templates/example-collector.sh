@@ -10,6 +10,9 @@ PIDFILE="/trading/run/.collector.pid"
 CHDIR="/trading/run/collector"
 STDOUT="/trading/data/collector.tick"
 
+USER="test"
+PASSWORD="1234"
+
 # Parse options
 while [[ $# -gt 0 ]]
 do
@@ -36,7 +39,7 @@ case $TYPE in
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --stdout "$STDOUT" --unsafe \
-      -- "$CONDA_PREFIX/bin/example-collector" --local-address "$SOCKET"
+      -- "$CONDA_PREFIX/bin/example-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
