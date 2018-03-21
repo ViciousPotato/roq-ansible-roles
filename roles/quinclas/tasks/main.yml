@@ -13,13 +13,13 @@
     - quinclas
 
   - name: update conda
-    shell: /trading/infra/miniconda2/bin/conda update -n base conda
+    shell: /trading/infra/miniconda3/bin/conda update -n base conda
     become_user: trading
     tags:
     - quinclas
 
   - name: test existence of the quinclas conda environment
-    shell: /trading/infra/miniconda2/bin/conda env list | grep "^quinclas "
+    shell: /trading/infra/miniconda3/bin/conda env list | grep "^quinclas "
     register: conda_quinclas
     failed_when: ( conda_quinclas.rc not in [ 0, 1 ] )
     become_user: trading
@@ -27,7 +27,7 @@
     - quinclas
 
   - name: create the quinclas conda environment
-    shell: /trading/infra/miniconda2/bin/conda env create -f /trading/infra/conda-environment.yml
+    shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
     when: conda_quinclas.rc == 1
     become_user: trading
     tags:

@@ -3,7 +3,7 @@
 set -e
 
 # Configuration
-CONDA_DIR="/trading/infra/miniconda2"
+CONDA_DIR="/trading/infra/miniconda3"
 LOG_DIR="/trading/logs"
 VARIABLES="/trading/config/instruments.conf"
 CONFIG="/trading/config/{{ item }}.conf"

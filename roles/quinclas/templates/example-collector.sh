@@ -3,7 +3,7 @@
 set -e
 
 # Configuration
-CONDA_DIR="/trading/infra/miniconda2"
+CONDA_DIR="/trading/infra/miniconda3"
 LOG_DIR="/trading/logs"
 SOCKET="/var/tmp/femasapi.sock"
 PIDFILE="/trading/run/.collector.pid"
@@ -39,7 +39,7 @@ case $TYPE in
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --stdout "$STDOUT" --unsafe \
-      -- "$CONDA_PREFIX/bin/example-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
+      -- "$CONDA_PREFIX/bin/example-collector" --mode "trading" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
