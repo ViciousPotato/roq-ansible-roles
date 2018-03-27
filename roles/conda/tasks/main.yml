@@ -6,9 +6,6 @@
   ### MINICONDA ###
   #################
 
-  # https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
-  # https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda-latest-Linux-x86_64.sh
-
   - name: install miniconda
     get_url:
       url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
@@ -16,7 +13,6 @@
       owner: root
       mode: 0755
     with_items:
-    - "Miniconda2-latest-Linux-x86_64.sh"
     - "Miniconda3-latest-Linux-x86_64.sh"
     tags:
       - conda
@@ -27,7 +23,6 @@
       dest: "/usr/local/bin/{{ item }}"
       state: link
     with_items:
-    - "Miniconda2-latest-Linux-x86_64.sh"
     - "Miniconda3-latest-Linux-x86_64.sh"
     tags:
     - conda
