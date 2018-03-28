@@ -34,7 +34,7 @@ done
 # Daemonize
 case $TYPE in
   start)
-  source "$CONDA_DIR/bin/activate" quinclas
+  source "$CONDA_DIR/bin/activate" roq
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
   export GLOG_v=0
@@ -48,7 +48,7 @@ case $TYPE in
       --config-file "$CONFIG" \
       --local-address "$SOCKET" \
       --monitor-port "{{ gateway_ports[item] }}" \
-      --name "quinclas_{{ item }}"
+      --name "roq_{{ item }}"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1

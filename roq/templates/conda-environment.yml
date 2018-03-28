@@ -1,5 +1,5 @@
-name: quinclas
+name: roq
 dependencies:
 {% for gateway in gateways %}
-  - quinclas-{{ gateway }}
+  - roq-{{ gateway }}
 {% endfor %}
