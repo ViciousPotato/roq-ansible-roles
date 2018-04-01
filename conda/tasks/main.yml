@@ -6,7 +6,7 @@
   ### MINICONDA ###
   #################
 
-  - name: install miniconda
+  - name: install miniconda3
     get_url:
       url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
       dest: "/opt"
@@ -17,7 +17,7 @@
     tags:
       - conda
 
-  - name: create symlink
+  - name: create miniconda3 symlink
     file:
       src: "/opt/{{ item }}"
       dest: "/usr/local/bin/{{ item }}"

@@ -73,4 +73,10 @@
     tags:
     - infra
 
+  - name: update conda3 to latest
+    shell: /trading/infra/miniconda3/bin/conda update -n root conda
+    become_user: trading
+    tags:
+    - infra
+
   become: true

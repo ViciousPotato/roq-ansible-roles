@@ -18,11 +18,11 @@ while [[ $# -gt 0 ]]
 do
 key="$1"
 case $key in
-  --start)
+  start)
   TYPE="start"
   shift
   ;;
-  --stop)
+  stop)
   TYPE="stop"
   shift
   ;;

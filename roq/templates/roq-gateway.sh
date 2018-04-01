@@ -5,9 +5,9 @@ set -e
 # Configuration
 CONDA_DIR="/trading/infra/miniconda3"
 LOG_DIR="/trading/logs"
-VARIABLES="/trading/config/instruments.conf"
-CONFIG="/trading/config/{{ item }}.conf"
-LICENSE="/trading/config/license.conf"
+VARIABLES="/trading/config/{{ item }}-instruments.conf"
+CONFIG="/trading/config/{{ item }}-master.conf"
+LICENSE="/trading/config/{{ item }}-license.conf"
 SOCKET="/var/tmp/{{ item }}.sock"
 PIDFILE="/trading/run/.{{ item }}.pid"
 CHDIR="/trading/run/{{ item }}"
@@ -17,11 +17,11 @@ while [[ $# -gt 0 ]]
 do
 key="$1"
 case $key in
-  --start)
+  start)
   TYPE="start"
   shift
   ;;
-  --stop)
+  stop)
   TYPE="stop"
   shift
   ;;
@@ -40,7 +40,7 @@ case $TYPE in
   export GLOG_v=0
   export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
-      "$CONDA_PREFIX/bin/quinclas-{{ item }}" \
+      "$CONDA_PREFIX/bin/roq-{{ item }}" \
       --socket-buffer-size 10485760 \
       --spin-usecs 100000 \
       --license-file "$LICENSE" \

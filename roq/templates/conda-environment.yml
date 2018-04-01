@@ -1,5 +1,6 @@
 name: roq
 dependencies:
+  - roq-samples
 {% for gateway in gateways %}
   - roq-{{ gateway }}
 {% endfor %}

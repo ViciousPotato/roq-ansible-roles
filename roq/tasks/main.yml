@@ -12,12 +12,6 @@
     tags:
     - roq
 
-  - name: update conda
-    shell: /trading/infra/miniconda3/bin/conda update -n base conda
-    become_user: trading
-    tags:
-    - roq
-
   - name: test existence of the roq conda environment
     shell: /trading/infra/miniconda3/bin/conda env list | grep "^roq "
     register: conda_roq
@@ -30,6 +24,21 @@
     shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
     when: conda_roq.rc == 1
     become_user: trading
+    tags:
+    - roq
+
+  # TODO(thraneh): rename config files and loop over gateways?
+  - name: create config files
+    template:
+      src: "templates/{{ item }}"
+      dest: "/trading/config/{{ item }}"
+      owner: trading
+      group: trading
+      mode: 0640
+    with_items:
+      - "femasapi-master.conf"
+      - "femasapi-instruments.conf"
+      - "femasapi-license.conf"
     tags:
     - roq
 
@@ -66,7 +75,7 @@
       weekday: "1-5"
       hour: 9
       minute: 14
-      job: "/trading/bin/roq-{{ item }}.sh --start >/dev/null 2>&1"
+      job: "/trading/bin/roq-{{ item }}.sh start >/dev/null 2>&1"
       user: trading
     with_items:
       - "{{ gateways }}"
@@ -79,7 +88,7 @@
       weekday: "1-5"
       hour: 15
       minute: 16
-      job: "/trading/bin/roq-{{ item }}.sh --stop >/dev/null 2>&1"
+      job: "/trading/bin/roq-{{ item }}.sh stop >/dev/null 2>&1"
       user: trading
     with_items:
       - "{{ gateways }}"
@@ -112,7 +121,7 @@
       weekday: "1-5"
       hour: 9
       minute: 14
-      job: "/trading/bin/example-collector.sh --start >/dev/null 2>&1"
+      job: "/trading/bin/example-collector.sh start >/dev/null 2>&1"
       user: trading
     tags:
     - roq
@@ -123,7 +132,7 @@
       weekday: "1-5"
       hour: 15
       minute: 16
-      job: "/trading/bin/example-collector.sh --stop >/dev/null 2>&1"
+      job: "/trading/bin/example-collector.sh stop >/dev/null 2>&1"
       user: trading
     tags:
     - roq
