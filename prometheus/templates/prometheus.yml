@@ -14,7 +14,7 @@ scrape_configs:
       - targets: ['localhost:9100']
 
 {% for gateway in gateways %}
-  - job_name: 'quinclas-{{ gateway }}'
+  - job_name: 'roq-{{ gateway }}'
     scrape_interval: 5s
     static_configs:
       - targets: ['localhost:{{ gateway_ports[gateway] }}']
