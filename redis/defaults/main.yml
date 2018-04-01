@@ -1,0 +1,8 @@
+---
+redis_version: "4.0.9"
+redis_bin_dir: "/usr/local/bin"
+redis_etc_dir: "/etc/redis"
+redis_run_dir: "/var/run/redis"
+redis_log_dir: "/var/log"
+redis_lib_dir: "/var/lib/redis"
+redis_port: 6379
