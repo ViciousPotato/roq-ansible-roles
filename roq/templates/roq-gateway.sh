@@ -5,9 +5,9 @@ set -e
 # Configuration
 CONDA_DIR="/trading/infra/miniconda3"
 LOG_DIR="/trading/logs"
-VARIABLES="/trading/config/{{ item }}-instruments.conf"
-CONFIG="/trading/config/{{ item }}-master.conf"
-LICENSE="/trading/config/{{ item }}-license.conf"
+VARIABLES="/trading/config/{{ item }}/variables.conf"
+CONFIG="/trading/config/{{ item }}/master.conf"
+LICENSE="/trading/config/{{ item }}/license.conf"
 SOCKET="/var/tmp/{{ item }}.sock"
 PIDFILE="/trading/run/.{{ item }}.pid"
 CHDIR="/trading/run/{{ item }}"

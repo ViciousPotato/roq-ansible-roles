@@ -27,18 +27,36 @@
     tags:
     - roq
 
+  - name: create config directory per gateway
+    file:
+      dest: "/trading/config/{{ item }}"
+      state: directory
+      owner: trading
+      group: trading
+      mode: 0750
+    with_items:
+      - "femasapi"
+    tags:
+    - roq
+
   # TODO(thraneh): rename config files and loop over gateways?
   - name: create config files
     template:
-      src: "templates/{{ item }}"
-      dest: "/trading/config/{{ item }}"
+      src: "templates/femasapi-{{ item }}"
+      dest: "/trading/config/femasapi/{{ item }}"
       owner: trading
       group: trading
       mode: 0640
     with_items:
-      - "femasapi-master.conf"
-      - "femasapi-instruments.conf"
-      - "femasapi-license.conf"
+      - "master.conf"
+      - "users.conf"
+      - "symbols.conf"
+      - "accounts.conf"
+      - "md_user.conf"
+      - "trader.conf"
+      - "order_templates.conf"
+      - "variables.conf"
+      - "license.conf"
     tags:
     - roq
 
