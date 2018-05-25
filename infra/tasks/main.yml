@@ -1,82 +1,80 @@
 ---
 
-- block:
+- name: add groups
+  group:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - trading
+  - algo
+  tags:
+  - infra
 
-  - name: add groups
-    group:
-      name: "{{ item }}"
-      state: present
-    with_items:
-    - trading
-    - algo
-    tags:
-    - infra
+- name: add users
+  user:
+    name: "{{ item }}"
+    system: yes
+    group: "{{ item }}"
+  with_items:
+  - trading
+  - algo
+  tags:
+  - infra
 
-  - name: add users
-    user:
-      name: "{{ item }}"
-      system: yes
-      group: "{{ item }}"
-    with_items:
-    - trading
-    - algo
-    tags:
-    - infra
+- name: create directories for trading
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: trading
+    group: trading
+    mode: 0750
+  with_items:
+  - /trading
+  - /trading/config
+  - /trading/bin
+  - /trading/run
+  - /trading/logs
+  - /trading/infra
+  - /trading/data
+  tags:
+  - infra
 
-  - name: create directories for trading
-    file:
-      path: "{{ item }}"
-      state: directory
-      owner: trading
-      group: trading
-      mode: 0750
-    with_items:
-    - /trading
-    - /trading/config
-    - /trading/bin
-    - /trading/run
-    - /trading/logs
-    - /trading/infra
-    - /trading/data
-    tags:
-    - infra
+- name: create directories for algo
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: algo
+    group: algo
+    mode: 0750
+  with_items:
+  - /algo
+  - /algo/config
+  - /algo/bin
+  - /algo/logs
+  tags:
+  - infra
 
-  - name: create directories for algo
-    file:
-      path: "{{ item }}"
-      state: directory
-      owner: algo
-      group: algo
-      mode: 0750
-    with_items:
-    - /algo
-    - /algo/config
-    - /algo/bin
-    - /algo/logs
-    tags:
-    - infra
-
-  - name: create conda3 environment
-    shell: /usr/local/bin/Miniconda3-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda3
-    args:
-      creates: "/trading/infra/miniconda3"
-    become_user: trading
-    tags:
-    - infra
-
-  - name: create .condarc in the conda3 environment
-    template:
-      src: "templates/condarc"
-      dest: "/trading/infra/miniconda3/.condarc"
-      owner: trading
-      mode: 0644
-    tags:
-    - infra
-
-  - name: update conda3 to latest
-    shell: /trading/infra/miniconda3/bin/conda update -n root conda
-    become_user: trading
-    tags:
-    - infra
-
+- name: create conda3 environment
+  shell: /usr/local/bin/Miniconda3-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda3
+  args:
+    creates: "/trading/infra/miniconda3"
   become: true
+  become_user: trading
+  tags:
+  - infra
+
+- name: create .condarc in the conda3 environment
+  template:
+    src: "templates/condarc"
+    dest: "/trading/infra/miniconda3/.condarc"
+    owner: trading
+    mode: 0644
+  tags:
+  - infra
+
+- name: update conda3 to latest
+  shell: /trading/infra/miniconda3/bin/conda update -n root conda
+  become: true
+  become_user: trading
+  tags:
+  - infra

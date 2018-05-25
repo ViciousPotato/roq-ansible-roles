@@ -1,93 +1,89 @@
 ---
 # https://www.digitalocean.com/community/tutorials/how-to-install-consul-on-ubuntu-16-04
 
-- block:
+- name: create install directory
+  file:
+    path: "/opt/consul-{{ consul_version }}.linux-amd64"
+    state: directory
+    owner: root
+  tags:
+  - consul
 
-  - name: create install directory
-    file:
-      path: "/opt/consul-{{ consul_version }}.linux-amd64"
-      state: directory
-      owner: root
-    tags:
-    - consul
+- name: download and install
+  unarchive:
+    src: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+    dest: "/opt/consul-{{ consul_version }}.linux-amd64"
+    remote_src: true
+    owner: root
+  notify:
+  - restart consul
+  tags:
+  - consul
 
-  - name: download and install
-    unarchive:
-      src: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
-      dest: "/opt/consul-{{ consul_version }}.linux-amd64"
-      remote_src: true
-      owner: root
-    notify:
-    - restart consul
-    tags:
-    - consul
+- name: create user
+  user:
+    name: consul
+    shell: /bin/false
+    system: yes
+  tags:
+  - consul
 
-  - name: create user
-    user:
-      name: consul
-      shell: /bin/false
-      system: yes
-    tags:
-    - consul
+- name: update consoles symlink
+  file:
+    src: "/opt/consul-{{ consul_version }}.linux-amd64/consul"
+    dest: /usr/local/bin/consul
+    owner: root
+    state: link
+  tags:
+  - consul
 
-  - name: update consoles symlink
-    file:
-      src: "/opt/consul-{{ consul_version }}.linux-amd64/consul"
-      dest: /usr/local/bin/consul
-      owner: root
-      state: link
-    tags:
-    - consul
+- name: create service directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: consul
+  with_items:
+  - /etc/consul
+  - /var/lib/consul
+  tags:
+  - consul
 
-  - name: create service directories
-    file:
-      path: "{{ item }}"
-      state: directory
-      owner: consul
-    with_items:
-    - /etc/consul
-    - /var/lib/consul
-    tags:
-    - consul
+- name: create service config file
+  template:
+    src: "templates/consul.json"
+    dest: "/etc/consul/consul.json"
+    owner: consul
+    group: consul
+    mode: 0644
+  notify:
+  - restart consul
+  tags:
+  - consul
 
-  - name: create service config file
-    template:
-      src: "templates/consul.json"
-      dest: "/etc/consul/consul.json"
-      owner: consul
-      group: consul
-      mode: 0644
-    notify:
-    - restart consul
-    tags:
-    - consul
+- name: create systemd service
+  template:
+    src: "templates/consul.service"
+    dest: "/etc/systemd/system/consul.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: consul_service
+  notify:
+  - restart consul
+  tags:
+  - consul
 
-  - name: create systemd service
-    template:
-      src: "templates/consul.service"
-      dest: "/etc/systemd/system/consul.service"
-      owner: root
-      group: root
-      mode: 0644
-    register: consul_service
-    notify:
-    - restart consul
-    tags:
-    - consul
+- name: reload systemd
+  shell: systemctl daemon-reload
+  when: consul_service.changed
+  notify:
+  - restart consul
+  tags:
+  - consul
 
-  - name: reload systemd
-    shell: systemctl daemon-reload
-    when: consul_service.changed
-    notify:
-    - restart consul
-    tags:
-    - consul
-
-  - name: enable service
-    service:
-      name: consul
-      enabled: yes
-    tags:
-    - consul
-
-  become: true
+- name: enable service
+  service:
+    name: consul
+    enabled: yes
+  tags:
+  - consul

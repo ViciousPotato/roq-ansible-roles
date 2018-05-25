@@ -1,158 +1,156 @@
 ---
 
-- block:
+- name: create conda environment file
+  template:
+    src: "templates/conda-environment.yml"
+    dest: "/trading/infra/conda-environment.yml"
+    owner: trading
+    group: trading
+    mode: 0640
+  tags:
+  - roq
 
-  - name: create conda environment file
-    template:
-      src: "templates/conda-environment.yml"
-      dest: "/trading/infra/conda-environment.yml"
-      owner: trading
-      group: trading
-      mode: 0640
-    tags:
-    - roq
+- name: test existence of the roq conda environment
+  shell: /trading/infra/miniconda3/bin/conda env list | grep "^roq "
+  register: conda_roq
+  failed_when: ( conda_roq.rc not in [ 0, 1 ] )
+  become: true
+  become_user: trading
+  tags:
+  - roq
 
-  - name: test existence of the roq conda environment
-    shell: /trading/infra/miniconda3/bin/conda env list | grep "^roq "
-    register: conda_roq
-    failed_when: ( conda_roq.rc not in [ 0, 1 ] )
-    become_user: trading
-    tags:
-    - roq
+- name: create the roq conda environment
+  shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
+  when: conda_roq.rc == 1
+  become: true
+  become_user: trading
+  tags:
+  - roq
 
-  - name: create the roq conda environment
-    shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
-    when: conda_roq.rc == 1
-    become_user: trading
-    tags:
-    - roq
+- name: create config directory per gateway
+  file:
+    dest: "/trading/config/{{ item }}"
+    state: directory
+    owner: trading
+    group: trading
+    mode: 0750
+  with_items:
+    - "femasapi"
+  tags:
+  - roq
 
-  - name: create config directory per gateway
-    file:
-      dest: "/trading/config/{{ item }}"
-      state: directory
-      owner: trading
-      group: trading
-      mode: 0750
-    with_items:
-      - "femasapi"
-    tags:
-    - roq
+# TODO(thraneh): rename config files and loop over gateways?
+- name: create config files
+  template:
+    src: "templates/femasapi-{{ item }}"
+    dest: "/trading/config/femasapi/{{ item }}"
+    owner: trading
+    group: trading
+    mode: 0640
+  with_items:
+    - "master.conf"
+    - "users.conf"
+    - "symbols.conf"
+    - "accounts.conf"
+    - "md_user.conf"
+    - "trader.conf"
+    - "order_templates.conf"
+    - "variables.conf"
+    - "license.conf"
+  tags:
+  - roq
 
-  # TODO(thraneh): rename config files and loop over gateways?
-  - name: create config files
-    template:
-      src: "templates/femasapi-{{ item }}"
-      dest: "/trading/config/femasapi/{{ item }}"
-      owner: trading
-      group: trading
-      mode: 0640
-    with_items:
-      - "master.conf"
-      - "users.conf"
-      - "symbols.conf"
-      - "accounts.conf"
-      - "md_user.conf"
-      - "trader.conf"
-      - "order_templates.conf"
-      - "variables.conf"
-      - "license.conf"
-    tags:
-    - roq
+- name: create daemon control scripts for gateways
+  template:
+    src: "templates/roq-gateway.sh"
+    dest: "/trading/bin/roq-{{ item }}.sh"
+    owner: trading
+    group: trading
+    mode: 0750
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq
 
-  - name: create daemon control scripts for gateways
-    template:
-      src: "templates/roq-gateway.sh"
-      dest: "/trading/bin/roq-{{ item }}.sh"
-      owner: trading
-      group: trading
-      mode: 0750
-    with_items:
-      - "{{ gateways }}"
-    tags:
-    - roq
-
-  - name: create run directories for gateways
-    file:
-      path: "/trading/run/{{ item }}"
-      state: directory
-      owner: trading
-      group: trading
-      mode: 0750
-    with_items:
-      - "{{ gateways }}"
-    tags:
-    - roq
+- name: create run directories for gateways
+  file:
+    path: "/trading/run/{{ item }}"
+    state: directory
+    owner: trading
+    group: trading
+    mode: 0750
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq
 
 # TODO: change user to trading
 # TODO: time-zones ???
 
-  - name: create crontab entries for starting gateways
-    cron:
-      name: "roq-{{ item }}-start"
-      weekday: "1-5"
-      hour: 9
-      minute: 14
-      job: "/trading/bin/roq-{{ item }}.sh start >/dev/null 2>&1"
-      user: trading
-    with_items:
-      - "{{ gateways }}"
-    tags:
-    - roq
+- name: create crontab entries for starting gateways
+  cron:
+    name: "roq-{{ item }}-start"
+    weekday: "1-5"
+    hour: 9
+    minute: 14
+    job: "/trading/bin/roq-{{ item }}.sh start >/dev/null 2>&1"
+    user: trading
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq
 
-  - name: create crontab entries for stopping gateway
-    cron:
-      name: "roq-{{ item }}-stop"
-      weekday: "1-5"
-      hour: 15
-      minute: 16
-      job: "/trading/bin/roq-{{ item }}.sh stop >/dev/null 2>&1"
-      user: trading
-    with_items:
-      - "{{ gateways }}"
-    tags:
-    - roq
+- name: create crontab entries for stopping gateway
+  cron:
+    name: "roq-{{ item }}-stop"
+    weekday: "1-5"
+    hour: 15
+    minute: 16
+    job: "/trading/bin/roq-{{ item }}.sh stop >/dev/null 2>&1"
+    user: trading
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq
 
-  - name: create daemon control script for collector
-    template:
-      src: "templates/example-collector.sh"
-      dest: "/trading/bin/example-collector.sh"
-      owner: trading
-      group: trading
-      mode: 0750
-    tags:
-    - roq
+- name: create daemon control script for collector
+  template:
+    src: "templates/example-collector.sh"
+    dest: "/trading/bin/example-collector.sh"
+    owner: trading
+    group: trading
+    mode: 0750
+  tags:
+  - roq
 
-  - name: create run directory for collector
-    file:
-      path: "/trading/run/collector"
-      state: directory
-      owner: trading
-      group: trading
-      mode: 0750
-    tags:
-    - roq
+- name: create run directory for collector
+  file:
+    path: "/trading/run/collector"
+    state: directory
+    owner: trading
+    group: trading
+    mode: 0750
+  tags:
+  - roq
 
-  - name: create crontab entry for starting collector
-    cron:
-      name: "example-collector-start"
-      weekday: "1-5"
-      hour: 9
-      minute: 14
-      job: "/trading/bin/example-collector.sh start >/dev/null 2>&1"
-      user: trading
-    tags:
-    - roq
+- name: create crontab entry for starting collector
+  cron:
+    name: "example-collector-start"
+    weekday: "1-5"
+    hour: 9
+    minute: 14
+    job: "/trading/bin/example-collector.sh start >/dev/null 2>&1"
+    user: trading
+  tags:
+  - roq
 
-  - name: create crontab entry for stopping collector
-    cron:
-      name: "example-collector-stop"
-      weekday: "1-5"
-      hour: 15
-      minute: 16
-      job: "/trading/bin/example-collector.sh stop >/dev/null 2>&1"
-      user: trading
-    tags:
-    - roq
-
-  become: true
+- name: create crontab entry for stopping collector
+  cron:
+    name: "example-collector-stop"
+    weekday: "1-5"
+    hour: 15
+    minute: 16
+    job: "/trading/bin/example-collector.sh stop >/dev/null 2>&1"
+    user: trading
+  tags:
+  - roq

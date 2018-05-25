@@ -1,102 +1,98 @@
 ---
 
-- block:
+###################
+### TIMEDATECTL ###
+###################
 
-  ###################
-  ### TIMEDATECTL ###
-  ###################
+- name: test ntp
+  shell: bash -c '/usr/bin/timedatectl status | grep "Network time on. yes" > /dev/null'
+  register: timedatectl_ntp
+  changed_when: timedatectl_ntp.rc == 1
+  failed_when: timedatectl_ntp.rc > 1
+  tags:
+  - sysadmin
+  - timedatectl
 
-  - name: test ntp
-    shell: bash -c '/usr/bin/timedatectl status | grep "Network time on. yes" > /dev/null'
-    register: timedatectl_ntp
-    changed_when: timedatectl_ntp.rc == 1
-    failed_when: timedatectl_ntp.rc > 1
-    tags:
-    - sysadmin
-    - timedatectl
+- name: enable ntp
+  command: /usr/bin/timedatectl set-ntp true
+  when: timedatectl_ntp.rc != 0
+  tags:
+  - sysadmin
+  - timedatectl
 
-  - name: enable ntp
-    command: /usr/bin/timedatectl set-ntp true
-    when: timedatectl_ntp.rc != 0
-    tags:
-    - sysadmin
-    - timedatectl
+###############
+### SYSSTAT ###
+###############
 
-  ###############
-  ### SYSSTAT ###
-  ###############
+- name: install tools
+  apt:
+    name: sysstat
+    state: present
+  tags:
+  - sysadmin
+  - sysstat
 
-  - name: install tools
-    apt:
-      name: sysstat
-      state: present
-    tags:
-    - sysadmin
-    - sysstat
+- name: enable sysstat
+  replace:
+    dest: '/etc/default/sysstat' 
+    regexp: 'ENABLED="false"'
+    replace: 'ENABLED="true"'
+  notify:
+    - restart sysstat
+  tags:
+  - sysadmin
+  - sysstat
 
-  - name: enable sysstat
-    replace:
-      dest: '/etc/default/sysstat' 
-      regexp: 'ENABLED="false"'
-      replace: 'ENABLED="true"'
-    notify:
-      - restart sysstat
-    tags:
-    - sysadmin
-    - sysstat
+#############
+### TOOLS ###
+#############
 
-  #############
-  ### TOOLS ###
-  #############
+- name: install tools
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - htop
+    - iotop
+    - iftop
+    - nethogs
+    - dstat
+    - lsof
+    - wget
+    - curl
+    - vim
+    - bash-completion
+    - mailutils
+    - traceroute
+    - whois
+    - daemon
+    - zip
+    - unzip
+  tags:
+  - sysadmin
+  - tools
 
-  - name: install tools
-    apt:
-      name: "{{ item }}"
-      state: present
-    with_items:
-      - htop
-      - iotop
-      - iftop
-      - nethogs
-      - dstat
-      - lsof
-      - wget
-      - curl
-      - vim
-      - bash-completion
-      - mailutils
-      - traceroute
-      - whois
-      - daemon
-      - zip
-      - unzip
-    tags:
-    - sysadmin
-    - tools
+############
+### BASH ###
+############
 
-  ############
-  ### BASH ###
-  ############
+- name: bash profile -- default editor + avoid history leaks
+  template:
+    src: "templates/profile.sh"
+    dest: "/etc/profile.d/00-aliases.sh"
+    owner: root
+    mode: 0644
+  tags:
+  - sysadmin
+  - bash
 
-  - name: bash profile -- default editor + avoid history leaks
-    template:
-      src: "templates/profile.sh"
-      dest: "/etc/profile.d/00-aliases.sh"
-      owner: root
-      mode: 0644
-    tags:
-    - sysadmin
-    - bash
+###########################
+### UNATTENDED-UPGRADES ###
+###########################
 
-  ###########################
-  ### UNATTENDED-UPGRADES ###
-  ###########################
-
-  - name: unattended-upgrades
-    apt:
-      name: unattended-upgrades
-      state: present
-    tags:
-    - sysadmin
-
-  become: true
+- name: unattended-upgrades
+  apt:
+    name: unattended-upgrades
+    state: present
+  tags:
+  - sysadmin

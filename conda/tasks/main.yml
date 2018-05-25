@@ -1,39 +1,35 @@
 ---
 
-- block:
+#################
+### MINICONDA ###
+#################
 
-  #################
-  ### MINICONDA ###
-  #################
-
-  - name: install miniconda3
-    get_url:
-      url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
-      dest: "/opt"
-      owner: root
-      mode: 0755
-    with_items:
-    - "Miniconda3-latest-Linux-x86_64.sh"
-    tags:
-      - conda
-
-  - name: create miniconda3 symlink
-    file:
-      src: "/opt/{{ item }}"
-      dest: "/usr/local/bin/{{ item }}"
-      state: link
-    with_items:
-    - "Miniconda3-latest-Linux-x86_64.sh"
-    tags:
+- name: install miniconda3
+  get_url:
+    url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
+    dest: "/opt"
+    owner: root
+    mode: 0755
+  with_items:
+  - "Miniconda3-latest-Linux-x86_64.sh"
+  tags:
     - conda
 
-  - name: create .condarc
-    template:
-      src: "templates/condarc"
-      dest: "/root/.condarc"
-      owner: root
-      mode: 0644
-    tags:
-    - conda
+- name: create miniconda3 symlink
+  file:
+    src: "/opt/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+  with_items:
+  - "Miniconda3-latest-Linux-x86_64.sh"
+  tags:
+  - conda
 
-  become: true
+- name: create .condarc
+  template:
+    src: "templates/condarc"
+    dest: "/root/.condarc"
+    owner: root
+    mode: 0644
+  tags:
+  - conda

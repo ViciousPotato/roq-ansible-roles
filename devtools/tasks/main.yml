@@ -1,143 +1,139 @@
 ---
 
-- block:
+##########################################
+### CORE (AUTOCONF/AUTOMAKE/C/C++/...) ###
+##########################################
 
-  ##########################################
-  ### CORE (AUTOCONF/AUTOMAKE/C/C++/...) ###
-  ##########################################
+- name: install build tools
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - build-essential
+  - gcc
+  - gdb
+  - autoconf
+  - autoconf-archive
+  - automake
+  - libtool
+  - cmake
+  - scons
+  - git
+  - exuberant-ctags
+  tags:
+  - devtools
 
-  - name: install build tools
-    apt:
-      name: "{{ item }}"
-      state: present
-    with_items:
-    - build-essential
-    - gcc
-    - gdb
-    - autoconf
-    - autoconf-archive
-    - automake
-    - libtool
-    - cmake
-    - scons
-    - git
-    - exuberant-ctags
-    tags:
-    - devtools
+###########
+### GIT ###
+###########
 
-  ###########
-  ### GIT ###
-  ###########
+- name: create gitconfig
+  template:
+    src: "templates/gitconfig"
+    dest: "/etc/gitconfig"
+    owner: root
+    mode: 0644
+  tags:
+  - devtools
+  - git
 
-  - name: create gitconfig
-    template:
-      src: "templates/gitconfig"
-      dest: "/etc/gitconfig"
-      owner: root
-      mode: 0644
-    tags:
-    - devtools
-    - git
+###########
+### VIM ###
+###########
 
-  ###########
-  ### VIM ###
-  ###########
+- name: set default editor (debian)
+  alternatives:
+    name: "editor"
+    path: "/usr/bin/vim"
+  when: ansible_os_family == "Debian"
+  tags:
+  - devtools
+  - vim
 
-  - name: set default editor (debian)
-    alternatives:
-      name: "editor"
-      path: "/usr/bin/vim"
-    when: ansible_os_family == "Debian"
-    tags:
-    - devtools
-    - vim
+# FIXME(thraneh): unfortunately ansible drops tty -- otherwise: # http://vim.wikia.com/wiki/Find_VIMRUNTIME_in_a_bash_script
+- name: define VIMRUNTIME
+  set_fact:
+    vimruntime: "/usr/share/vim/vim{{ vim_version }}"
+  tags:
+  - devtools
+  - vim
 
-  # FIXME(thraneh): unfortunately ansible drops tty -- otherwise: # http://vim.wikia.com/wiki/Find_VIMRUNTIME_in_a_bash_script
-  - name: define VIMRUNTIME
-    set_fact:
-      vimruntime: "/usr/share/vim/vim{{ vim_version }}"
-    tags:
-    - devtools
-    - vim
+- name: install zenburn
+  get_url:
+    url: "https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim"
+    dest: "{{ vimruntime }}/colors/zenburn.vim"
+    owner: root
+    mode: 0644
+  tags:
+  - devtools
+  - vim
 
-  - name: install zenburn
-    get_url:
-      url: "https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim"
-      dest: "{{ vimruntime }}/colors/zenburn.vim"
-      owner: root
-      mode: 0644
-    tags:
-    - devtools
-    - vim
+- name: install pathogen
+  get_url:
+    url: "https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim"
+    dest: "{{ vimruntime }}/autoload/pathogen.vim"
+    owner: root
+    mode: 0644
+  tags:
+  - devtools
+  - vim
 
-  - name: install pathogen
-    get_url:
-      url: "https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim"
-      dest: "{{ vimruntime }}/autoload/pathogen.vim"
-      owner: root
-      mode: 0644
-    tags:
-    - devtools
-    - vim
+- name: create bundle directory
+  file:
+    path: "{{ vimruntime }}/bundle"
+    state: directory
+    owner: root
+    mode: 0755
+  tags:
+  - devtools
+  - vim
 
-  - name: create bundle directory
-    file:
-      path: "{{ vimruntime }}/bundle"
-      state: directory
-      owner: root
-      mode: 0755
-    tags:
-    - devtools
-    - vim
+- name: install airline
+  git:
+    repo: https://github.com/vim-airline/vim-airline"
+    dest: usr/share/vim/vim74/bundle/vim-airline"
+  tags:
+  - devtools
+  - vim
 
-  - name: install airline
-    git:
-      repo: https://github.com/vim-airline/vim-airline"
-      dest: usr/share/vim/vim74/bundle/vim-airline"
-    tags:
-    - devtools
-    - vim
+- name: install winresizer
+  git:
+    repo: https://github.com/simeji/winresizer"
+    dest: usr/share/vim/vim74/bundle/winresizer"
+  tags:
+  - devtools
+  - vim
 
-  - name: install winresizer
-    git:
-      repo: https://github.com/simeji/winresizer"
-      dest: usr/share/vim/vim74/bundle/winresizer"
-    tags:
-    - devtools
-    - vim
+- name: install ctrlp
+  git:
+    repo: https://github.com/kien/ctrlp.vim"
+    dest: usr/share/vim/vim74/bundle/ctrlp"
+  tags:
+  - devtools
+  - vim
 
-  - name: install ctrlp
-    git:
-      repo: https://github.com/kien/ctrlp.vim"
-      dest: usr/share/vim/vim74/bundle/ctrlp"
-    tags:
-    - devtools
-    - vim
+- name: install nerdtree
+  git:
+    repo: "https://github.com/scrooloose/nerdtree"
+    dest: "{{ vimruntime }}/bundle/nerdtree"
+  tags:
+  - devtools
+  - vim
 
-  - name: install nerdtree
-    git:
-      repo: "https://github.com/scrooloose/nerdtree"
-      dest: "{{ vimruntime }}/bundle/nerdtree"
-    tags:
-    - devtools
-    - vim
+- name: install taglist
+  git:
+    repo: "https://github.com/vim-scripts/taglist.vim"
+    dest: "{{ vimruntime }}/bundle/taglist"
+  tags:
+  - devtools
+  - vim
 
-  - name: install taglist
-    git:
-      repo: "https://github.com/vim-scripts/taglist.vim"
-      dest: "{{ vimruntime }}/bundle/taglist"
-    tags:
-    - devtools
-    - vim
-
-  - name: create vimrc
-    template:
-      src: "templates/vimrc"
-      dest: "/etc/vim/vimrc.local"
-      owner: root
-      mode: 0644
-    tags:
-    - devtools
-    - vim
-
-  become: true
+- name: create vimrc
+  template:
+    src: "templates/vimrc"
+    dest: "/etc/vim/vimrc.local"
+    owner: root
+    mode: 0644
+  tags:
+  - devtools
+  - vim

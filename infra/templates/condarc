@@ -1,5 +1,5 @@
 channels:
-  - http://localhost/dist/conda/unstable
+  - http://{{ roq.condarc }}/dist/conda/unstable
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
   - defaults
