@@ -1,0 +1,52 @@
+---
+# https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+
+- name: apt gpg key add docker
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags:
+  - docker
+
+- name: find ubuntu version
+  command: "/usr/bin/lsb_release -cs"
+  register: ubuntu_version
+  tags:
+  - docker
+
+- name: apt repository add docker
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_version.stdout }} stable"
+    state: present
+  tags:
+  - docker
+
+- name: apt install docker-ce
+  apt:
+    name: docker-ce
+    update_cache: yes
+  tags:
+  - docker
+
+# otherwise (ansible) docker_image will fail...
+- name: pip install docker-py
+  pip:
+    name: docker-py
+    state: latest
+  tags:
+  - docker
+
+- name: docker pull images
+  docker_image:
+    name: "{{ item }}"
+    http_timeout: 300
+  with_items:
+    - "consul"
+    - "nginx"
+    - "prom/node-exporter"
+    - "prom/prometheus"
+    - "redis"
+    - "titpetric/netdata"
+    - "vault"
+  tags:
+  - docker

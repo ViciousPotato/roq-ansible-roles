@@ -1,0 +1,13 @@
+---
+- name: apt install python-setuptools
+  apt:
+    name: python-setuptools
+  tags:
+  - python
+
+- name: easy install pip
+  easy_install:
+    name: pip
+    state: latest
+  tags:
+  - python
