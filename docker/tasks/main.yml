@@ -48,5 +48,6 @@
     - "redis"
     - "titpetric/netdata"
     - "vault"
+    - "roqtrading/roq-femasapi"
   tags:
   - docker
