@@ -49,5 +49,6 @@
     - "titpetric/netdata"
     - "vault"
     - "roqtrading/roq-femasapi"
+    - "roqtrading/roq-samples"
   tags:
   - docker
