@@ -4,21 +4,37 @@
 ### NETDATA ###
 ###############
 
-# https://github.com/firehol/netdata/wiki/Installation
-# /usr/src/netdata.git/netdata-updater.sh -f
-
-- name: download netdata
-  get_url:
-    url: "https://my-netdata.io/kickstart.sh"
-    dest: /opt
-    owner: root
-    mode: 0755
+- name: pull docker image
+  docker_image:
+    name: "titpetric/netdata"
+    http_timeout: 300
   tags:
-    - netdata
+  - netdata
 
-- name: install netdata
-  script: "/opt/kickstart.sh"
-  args:
-    creates: "/usr/sbin/netdata"
+- name: create systemd service
+  template:
+    src: "templates/netdata.service"
+    dest: "/etc/systemd/system/netdata.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: netdata_service
+  notify:
+  - restart netdata
+  tags:
+  - netdata
+
+- name: service -> systemctl daemon-reload
+  shell: systemctl daemon-reload
+  when: netdata_service.changed
+  notify:
+  - restart netdata
+  tags:
+  - netdata
+
+- name: enable service
+  service:
+    name: netdata
+    enabled: yes
   tags:
   - netdata

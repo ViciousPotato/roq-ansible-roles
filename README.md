@@ -28,22 +28,22 @@ It's a default configuration meant to help you get started quickly.
 * Tuning (trading hosts)
   * Kernel configuration (/etc/sysctl.conf).
   * Tune network stack for low latency.
+* Docker (trading hosts)
+	* Install the Docker container manager (system-wide).
 * Infra (trading hosts)
 	* Create trading user/group (for the deployment of software).
 	* Create algo user/group (for the deployment of your strategies).
-* Consul (trading hosts)
-	* Install the Consul service discovery and configuration agent.
-* Prometheus (trading hosts)
-	* Install the Prometheus monitoring system and time-series database.
-* Redis (trading hosts)
-	* Install the Redis in-memory database.
 * Nginx (trading hosts)
 	* Install the Nginx reverse proxy server.
-* Roq (trading hosts)
-	* Install and configure gateways.
-	* Configure crontab to start/stop the gateways.
+* Redis (trading hosts)
+	* Install the Redis in-memory database.
 * Netdata (trading hosts)
   * Install the Netdata real-time performance and health-monitoring system.
+* Prometheus (trading hosts)
+	* Install the Prometheus monitoring system and time-series database.
+* Roq Trading (trading hosts)
+	* Install and configure gateways.
+	* Configure crontab to start/stop the gateways.
 * Devtools (development hosts)
 	* Install development tools (mostly focused on C-style languages).
 	* Default git configuration (system-wide).

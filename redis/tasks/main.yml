@@ -1,68 +1,57 @@
 ---
-- name: download source
-  unarchive:
-    creates: "/opt/redis-{{ redis_version }}/Makefile"
-    src: "http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz"
-    dest: /opt
-    copy: no
-  tags:
-  - redis
-  
-- name: make install
-  command: make -j{{ ansible_processor_cores }} install
-  args:
-    chdir: "/opt/redis-{{ redis_version }}"
-    creates: "/usr/local/bin/redis-server"
-  notify:
-  - restart redis
+###############
+### NETDATA ###
+###############
+
+- name: pull docker image
+  docker_image:
+    name: "redis"
+    http_timeout: 300
   tags:
   - redis
 
-- name: create redis user
-  user:
-    name: redis
-    system: yes
-    shell: /bin/false
-  tags:
-  - redis
-
-- name: create redis directories
+- name: create directories
   file:
     path: "{{ item }}"
     state: directory
-    owner: redis
+    owner: root
+    group: root
+    mode: 0755
   with_items:
-  - "{{ redis_lib_dir }}"
-  - "{{ redis_etc_dir }}"
+    path: "{{ redis_etc_dir }}"
+    path: "{{ redis_lib_dir }}"
   notify:
   - restart redis
   tags:
   - redis
 
-# TODO consider use validate=... to stop the service before modifying
-- name: redis config
+- name: create config file
   template:
     src: "templates/redis.conf"
     dest: "{{ redis_etc_dir }}/redis.conf"
-    owner: redis
-    group: redis
+    owner: root
+    group: root
     mode: 0644
-  notify:
-  - restart redis
-  tags:
-  - redis
-
-- name: redis service
-  template:
-    src: "templates/redis.service"
-    dest: "/etc/systemd/system/redis.service"
   register: redis_service
   notify:
   - restart redis
   tags:
   - redis
 
-- name: redis service -> systemctl daemon-reload
+- name: create systemd service
+  template:
+    src: "templates/redis.service"
+    dest: "/etc/systemd/system/redis.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: redis_service
+  notify:
+  - restart redis
+  tags:
+  - redis
+
+- name: service -> systemctl daemon-reload
   shell: systemctl daemon-reload
   when: redis_service.changed
   notify:
@@ -70,7 +59,7 @@
   tags:
   - redis
 
-- name: redis enable
+- name: enable service
   service:
     name: redis
     enabled: yes

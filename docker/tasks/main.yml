@@ -43,12 +43,6 @@
   with_items:
     - "consul"
     - "nginx"
-    - "prom/node-exporter"
-    - "prom/prometheus"
-    - "redis"
-    - "titpetric/netdata"
     - "vault"
-    - "roqtrading/roq-femasapi"
-    - "roqtrading/roq-samples"
   tags:
   - docker

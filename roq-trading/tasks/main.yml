@@ -1,5 +1,17 @@
 ---
 
+- name: docker pull images
+  docker_image:
+    name: "{{ item }}"
+    http_timeout: 300
+  with_items:
+    - "roqtrading/roq-femasapi"
+    - "roqtrading/roq-samples"
+  tags:
+  - roq-trading
+
+
+
 - name: create conda environment file
   template:
     src: "templates/conda-environment.yml"
@@ -8,7 +20,7 @@
     group: trading
     mode: 0640
   tags:
-  - roq
+  - roq-trading
 
 - name: test existence of the roq conda environment
   shell: /trading/infra/miniconda3/bin/conda env list | grep "^roq "
@@ -17,7 +29,7 @@
   become: true
   become_user: trading
   tags:
-  - roq
+  - roq-trading
 
 - name: create the roq conda environment
   shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
@@ -25,7 +37,7 @@
   become: true
   become_user: trading
   tags:
-  - roq
+  - roq-trading
 
 - name: create config directory per gateway
   file:
@@ -37,7 +49,7 @@
   with_items:
     - "femasapi"
   tags:
-  - roq
+  - roq-trading
 
 # TODO(thraneh): rename config files and loop over gateways?
 - name: create config files
@@ -58,7 +70,7 @@
     - "variables.conf"
     - "license.conf"
   tags:
-  - roq
+  - roq-trading
 
 - name: create daemon control scripts for gateways
   template:
@@ -70,7 +82,7 @@
   with_items:
     - "{{ gateways }}"
   tags:
-  - roq
+  - roq-trading
 
 - name: create run directories for gateways
   file:
@@ -82,7 +94,7 @@
   with_items:
     - "{{ gateways }}"
   tags:
-  - roq
+  - roq-trading
 
 # TODO: change user to trading
 # TODO: time-zones ???
@@ -98,7 +110,7 @@
   with_items:
     - "{{ gateways }}"
   tags:
-  - roq
+  - roq-trading
 
 - name: create crontab entries for stopping gateway
   cron:
@@ -111,7 +123,7 @@
   with_items:
     - "{{ gateways }}"
   tags:
-  - roq
+  - roq-trading
 
 - name: create daemon control script for collector
   template:
@@ -121,7 +133,7 @@
     group: trading
     mode: 0750
   tags:
-  - roq
+  - roq-trading
 
 - name: create run directory for collector
   file:
@@ -131,7 +143,7 @@
     group: trading
     mode: 0750
   tags:
-  - roq
+  - roq-trading
 
 - name: create crontab entry for starting collector
   cron:
@@ -142,7 +154,7 @@
     job: "/trading/bin/example-collector.sh start >/dev/null 2>&1"
     user: trading
   tags:
-  - roq
+  - roq-trading
 
 - name: create crontab entry for stopping collector
   cron:
@@ -153,4 +165,4 @@
     job: "/trading/bin/example-collector.sh stop >/dev/null 2>&1"
     user: trading
   tags:
-  - roq
+  - roq-trading
