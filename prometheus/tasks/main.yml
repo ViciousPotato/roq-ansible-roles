@@ -42,6 +42,7 @@
   file:
     path: "/var/lib/prometheus"
     state: directory
+    recurse: yes
     owner: root
     group: root
     mode: 0777
