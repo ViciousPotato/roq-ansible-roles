@@ -18,8 +18,8 @@
     group: root
     mode: 0755
   with_items:
-    path: "{{ redis_etc_dir }}"
-    path: "{{ redis_lib_dir }}"
+  - "{{ redis_etc_dir }}"
+  - "{{ redis_lib_dir }}"
   notify:
   - restart redis
   tags:
