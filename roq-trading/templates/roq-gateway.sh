@@ -42,7 +42,7 @@ case $TYPE in
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/roq-{{ item }}" \
       --socket-buffer-size 10485760 \
-      --spin-usecs 100000 \
+      --spin-usecs 1000 \
       --license-file "$LICENSE" \
       --config-variables "$VARIABLES" \
       --config-file "$CONFIG" \
