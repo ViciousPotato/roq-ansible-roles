@@ -35,9 +35,8 @@ done
 case $TYPE in
   start)
   source "$CONDA_DIR/bin/activate" roq
-  export GLOG_log_dir="$LOG_DIR"
-  export GLOG_minloglevel=0
-  export GLOG_v=0
+  export ROQ_log_dir="$LOG_DIR"
+  export ROQ_v=0
   export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/roq-{{ item }}" \
