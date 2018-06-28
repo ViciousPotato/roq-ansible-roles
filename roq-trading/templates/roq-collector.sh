@@ -39,7 +39,7 @@ case $TYPE in
   export GLOG_log_dir="$LOG_DIR"
   export GLOG_minloglevel=0
   /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --stdout "$STDOUT" --unsafe \
-      -- "$CONDA_PREFIX/bin/example-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
+      -- "$CONDA_PREFIX/bin/roq-samples-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
   ;;
   stop)
   /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1

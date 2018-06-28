@@ -127,8 +127,8 @@
 
 - name: create daemon control script for collector
   template:
-    src: "templates/example-collector.sh"
-    dest: "/trading/bin/example-collector.sh"
+    src: "templates/roq-collector.sh"
+    dest: "/trading/bin/roq-collector.sh"
     owner: trading
     group: trading
     mode: 0750
@@ -147,22 +147,22 @@
 
 - name: create crontab entry for starting collector
   cron:
-    name: "example-collector-start"
+    name: "roq-collector-start"
     weekday: "1-5"
     hour: 9
     minute: 14
-    job: "/trading/bin/example-collector.sh start >/dev/null 2>&1"
+    job: "/trading/bin/roq-collector.sh start >/dev/null 2>&1"
     user: trading
   tags:
   - roq-trading
 
 - name: create crontab entry for stopping collector
   cron:
-    name: "example-collector-stop"
+    name: "roq-collector-stop"
     weekday: "1-5"
     hour: 15
     minute: 16
-    job: "/trading/bin/example-collector.sh stop >/dev/null 2>&1"
+    job: "/trading/bin/roq-collector.sh stop >/dev/null 2>&1"
     user: trading
   tags:
   - roq-trading
