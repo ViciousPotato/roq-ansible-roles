@@ -1,3 +1,4 @@
 ---
 - name: restart netdata
+  become: true
   service: name=netdata state=restarted enabled=yes

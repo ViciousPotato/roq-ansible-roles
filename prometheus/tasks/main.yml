@@ -1,6 +1,7 @@
 ---
 
 - name: pull docker images
+  become: true
   docker_image:
     name: "prom/prometheus"
     http_timeout: 300
@@ -15,6 +16,7 @@
 ##################
 
 - name: create config directory
+  become: true
   file:
     path: "/etc/prometheus"
     state: directory
@@ -27,6 +29,7 @@
   - prometheus
 
 - name: create config file
+  become: true
   template:
     src: "templates/prometheus.yml"
     dest: "/etc/prometheus/prometheus.yml"
@@ -39,6 +42,7 @@
   - prometheus
 
 - name: create database directory
+  become: true
   file:
     path: "/var/lib/prometheus"
     state: directory
@@ -52,6 +56,7 @@
   - prometheus
 
 - name: create systemd service
+  become: true
   template:
     src: "templates/prometheus.service"
     dest: "/etc/systemd/system/prometheus.service"
@@ -65,6 +70,7 @@
   - prometheus
 
 - name: service -> systemctl daemon-reload
+  become: true
   shell: systemctl daemon-reload
   when: prometheus_service.changed
   notify:
@@ -73,6 +79,7 @@
   - prometheus
 
 - name: enable service
+  become: true
   service:
     name: prometheus
     enabled: yes
@@ -84,6 +91,7 @@
 #####################
 
 - name: create systemd service
+  become: true
   template:
     src: "templates/node-exporter.service"
     dest: "/etc/systemd/system/node-exporter.service"
@@ -97,6 +105,7 @@
   - prometheus
 
 - name: service -> systemctl daemon-reload
+  become: true
   shell: systemctl daemon-reload
   when: node_exporter_service.changed
   notify:
@@ -105,6 +114,7 @@
   - prometheus
 
 - name: enable service
+  become: true
   service:
     name: node-exporter
     enabled: yes

@@ -1,6 +1,7 @@
 ---
 
 - name: docker pull images
+  become: true
   docker_image:
     name: "{{ item }}"
     http_timeout: 300
@@ -13,6 +14,7 @@
 
 
 - name: create conda environment file
+  become: true
   template:
     src: "templates/conda-environment.yml"
     dest: "/trading/infra/conda-environment.yml"
@@ -26,20 +28,28 @@
   shell: /trading/infra/miniconda3/bin/conda env list | grep "^roq "
   register: conda_roq
   failed_when: ( conda_roq.rc not in [ 0, 1 ] )
-  become: true
-  become_user: trading
   tags:
   - roq-trading
 
 - name: create the roq conda environment
   shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
   when: conda_roq.rc == 1
+  tags:
+  - roq-trading
+
+- name: set miniconda3 ownership
   become: true
-  become_user: trading
+  file:
+    path: "/trading/infra/miniconda3"
+    owner: trading
+    group: trading
+    mode: "g+w"
+    recurse: yes
   tags:
   - roq-trading
 
 - name: create config directory per gateway
+  become: true
   file:
     dest: "/trading/config/{{ item }}"
     state: directory
@@ -53,6 +63,7 @@
 
 # TODO(thraneh): rename config files and loop over gateways?
 - name: create config files
+  become: true
   template:
     src: "templates/femasapi-{{ item }}"
     dest: "/trading/config/femasapi/{{ item }}"
@@ -73,6 +84,7 @@
   - roq-trading
 
 - name: create daemon control scripts for gateways
+  become: true
   template:
     src: "templates/roq-gateway.sh"
     dest: "/trading/bin/roq-{{ item }}.sh"
@@ -85,6 +97,7 @@
   - roq-trading
 
 - name: create run directories for gateways
+  become: true
   file:
     path: "/trading/run/{{ item }}"
     state: directory
@@ -100,6 +113,7 @@
 # TODO: time-zones ???
 
 - name: create crontab entries for starting gateways
+  become: true
   cron:
     name: "roq-{{ item }}-start"
     weekday: "1-5"
@@ -113,6 +127,7 @@
   - roq-trading
 
 - name: create crontab entries for stopping gateway
+  become: true
   cron:
     name: "roq-{{ item }}-stop"
     weekday: "1-5"
@@ -126,6 +141,7 @@
   - roq-trading
 
 - name: create daemon control script for collector
+  become: true
   template:
     src: "templates/roq-collector.sh"
     dest: "/trading/bin/roq-collector.sh"
@@ -136,6 +152,7 @@
   - roq-trading
 
 - name: create run directory for collector
+  become: true
   file:
     path: "/trading/run/collector"
     state: directory
@@ -146,6 +163,7 @@
   - roq-trading
 
 - name: create crontab entry for starting collector
+  become: true
   cron:
     name: "roq-collector-start"
     weekday: "1-5"
@@ -157,6 +175,7 @@
   - roq-trading
 
 - name: create crontab entry for stopping collector
+  become: true
   cron:
     name: "roq-collector-stop"
     weekday: "1-5"

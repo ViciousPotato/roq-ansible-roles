@@ -5,6 +5,7 @@
 #################
 
 - name: install miniconda3
+  become: true
   get_url:
     url: "https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/{{ item }}"
     dest: "/opt"
@@ -16,6 +17,7 @@
     - conda
 
 - name: create miniconda3 symlink
+  become: true
   file:
     src: "/opt/{{ item }}"
     dest: "/usr/local/bin/{{ item }}"
@@ -26,6 +28,7 @@
   - conda
 
 - name: create .condarc
+  become: true
   template:
     src: "templates/condarc"
     dest: "/root/.condarc"

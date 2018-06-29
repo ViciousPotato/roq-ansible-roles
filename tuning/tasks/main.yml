@@ -5,6 +5,7 @@
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/2/html/Realtime_Tuning_Guide/index.html
 
 - name: update sysctl.conf (very aggressive settings)
+  become: true
   sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"

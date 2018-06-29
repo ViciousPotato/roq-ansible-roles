@@ -2,6 +2,7 @@
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 
 - name: apt gpg key add docker
+  become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
@@ -15,6 +16,7 @@
   - docker
 
 - name: apt repository add docker
+  become: true
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_version.stdout }} stable"
     state: present
@@ -22,6 +24,7 @@
   - docker
 
 - name: apt install docker-ce
+  become: true
   apt:
     name: docker-ce
     update_cache: yes
@@ -30,6 +33,7 @@
 
 # otherwise (ansible) docker_image will fail...
 - name: pip install docker-py
+  become: true
   pip:
     name: docker-py
     state: latest
@@ -37,6 +41,7 @@
   - docker
 
 - name: docker pull images
+  become: true
   docker_image:
     name: "{{ item }}"
     http_timeout: 300

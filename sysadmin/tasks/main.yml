@@ -14,6 +14,7 @@
   - timedatectl
 
 - name: enable ntp
+  become: true
   command: /usr/bin/timedatectl set-ntp true
   when: timedatectl_ntp.rc != 0
   tags:
@@ -25,6 +26,7 @@
 ###############
 
 - name: install tools
+  become: true
   apt:
     name: sysstat
     state: present
@@ -33,6 +35,7 @@
   - sysstat
 
 - name: enable sysstat
+  become: true
   replace:
     dest: '/etc/default/sysstat' 
     regexp: 'ENABLED="false"'
@@ -48,6 +51,7 @@
 #############
 
 - name: install tools
+  become: true
   apt:
     name: "{{ item }}"
     state: present
@@ -77,6 +81,7 @@
 ############
 
 - name: bash profile -- default editor + avoid history leaks
+  become: true
   template:
     src: "templates/profile.sh"
     dest: "/etc/profile.d/00-aliases.sh"

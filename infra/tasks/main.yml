@@ -1,6 +1,7 @@
 ---
 
 - name: add groups
+  become: true
   group:
     name: "{{ item }}"
     state: present
@@ -11,6 +12,7 @@
   - infra
 
 - name: add users
+  become: true
   user:
     name: "{{ item }}"
     system: yes
@@ -21,7 +23,20 @@
   tags:
   - infra
 
+- name: adding users to group trading
+  become: true
+  user:
+    name: "{{ item }}"
+    groups: trading
+    append: yes
+  with_items:
+  - trading
+  - "{{ ansible_user }}"
+  tags:
+  - infra
+
 - name: create directories for trading
+  become: true
   file:
     path: "{{ item }}"
     state: directory
@@ -40,6 +55,7 @@
   - infra
 
 - name: create directories for algo
+  become: true
   file:
     path: "{{ item }}"
     state: directory
@@ -54,27 +70,49 @@
   tags:
   - infra
 
+# FIXME(thraneh): this will fail if ansible_user has just been added to the trading group... unsure how to refresh
 - name: create conda3 environment
   shell: /usr/local/bin/Miniconda3-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda3
   args:
     creates: "/trading/infra/miniconda3"
+  tags:
+  - infra
+  - hans
+
+- name: set miniconda3 ownership
   become: true
-  become_user: trading
+  file:
+    path: "/trading/infra/miniconda3"
+    owner: trading
+    group: trading
+    mode: "g+w"
+    recurse: yes
   tags:
   - infra
 
 - name: create .condarc in the conda3 environment
+  become: true
   template:
     src: "templates/condarc"
     dest: "/trading/infra/miniconda3/.condarc"
     owner: trading
+    group: trading
     mode: 0644
   tags:
   - infra
 
 - name: update conda3 to latest
   shell: /trading/infra/miniconda3/bin/conda update -n root conda
+  tags:
+  - infra
+
+- name: set miniconda3 ownership
   become: true
-  become_user: trading
+  file:
+    path: "/trading/infra/miniconda3"
+    owner: trading
+    group: trading
+    mode: "g+w"
+    recurse: yes
   tags:
   - infra

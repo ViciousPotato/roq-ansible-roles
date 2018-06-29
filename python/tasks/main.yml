@@ -1,11 +1,13 @@
 ---
 - name: apt install python-setuptools
+  become: true
   apt:
     name: python-setuptools
   tags:
   - python
 
 - name: easy install pip
+  become: true
   easy_install:
     name: pip
     state: latest

@@ -1,3 +1,4 @@
 ---
 - name: restart redis
+  become: true
   service: name=redis state=restarted enabled=yes

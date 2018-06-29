@@ -5,6 +5,7 @@
 ###############
 
 - name: pull docker image
+  become: true
   docker_image:
     name: "titpetric/netdata"
     http_timeout: 300
@@ -12,6 +13,7 @@
   - netdata
 
 - name: create systemd service
+  become: true
   template:
     src: "templates/netdata.service"
     dest: "/etc/systemd/system/netdata.service"
@@ -25,6 +27,7 @@
   - netdata
 
 - name: service -> systemctl daemon-reload
+  become: true
   shell: systemctl daemon-reload
   when: netdata_service.changed
   notify:
@@ -33,6 +36,7 @@
   - netdata
 
 - name: enable service
+  become: true
   service:
     name: netdata
     enabled: yes

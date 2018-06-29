@@ -4,6 +4,7 @@
 ###############
 
 - name: pull docker image
+  become: true
   docker_image:
     name: "redis"
     http_timeout: 300
@@ -11,6 +12,7 @@
   - redis
 
 - name: create directories
+  become: true
   file:
     path: "{{ item }}"
     state: directory
@@ -26,6 +28,7 @@
   - redis
 
 - name: create config file
+  become: true
   template:
     src: "templates/redis.conf"
     dest: "{{ redis_etc_dir }}/redis.conf"
@@ -39,6 +42,7 @@
   - redis
 
 - name: create systemd service
+  become: true
   template:
     src: "templates/redis.service"
     dest: "/etc/systemd/system/redis.service"
@@ -52,6 +56,7 @@
   - redis
 
 - name: service -> systemctl daemon-reload
+  become: true
   shell: systemctl daemon-reload
   when: redis_service.changed
   notify:
@@ -60,6 +65,7 @@
   - redis
 
 - name: enable service
+  become: true
   service:
     name: redis
     enabled: yes
