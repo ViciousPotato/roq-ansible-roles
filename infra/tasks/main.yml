@@ -42,7 +42,7 @@
     state: directory
     owner: trading
     group: trading
-    mode: 0750
+    mode: 0770
   with_items:
   - /trading
   - /trading/config
