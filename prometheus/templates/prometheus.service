@@ -10,6 +10,7 @@ ExecStartPre=-/usr/bin/docker stop %n
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStartPre=/usr/bin/docker pull prom/prometheus
 ExecStart=/usr/bin/docker run --rm --name %n \
+  --security-opt apparmor=unconfined \
   --net host \
   --volume /etc/prometheus:/etc/prometheus:ro \
   --volume /var/lib/prometheus:/var/lib/prometheus \
