@@ -77,7 +77,6 @@
     creates: "/trading/infra/miniconda3"
   tags:
   - infra
-  - hans
 
 - name: set miniconda3 ownership
   become: true
