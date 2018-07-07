@@ -41,6 +41,19 @@
   tags:
   - prometheus
 
+- name: create alert rules
+  become: true
+  template:
+    src: "templates/alert.rules"
+    dest: "/etc/prometheus/alert.rules"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+  - restart prometheus
+  tags:
+  - prometheus
+
 - name: create database directory
   become: true
   file:
