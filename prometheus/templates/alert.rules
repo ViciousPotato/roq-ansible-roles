@@ -1,5 +1,5 @@
 groups:
-- name: example
+- name: roq_gateway_monitoring
   rules:
 {% for gateway in gateways %}
   - alert: roq_{{ gateway }}_connection
@@ -8,5 +8,23 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: Unable to connect
+      summary: Gateway is unable to connect to broker or exchange.
+{% endfor %}
+{% for gateway in gateways %}
+  - alert: roq_{{ gateway }}_client_connections
+    expr: roq_{{ gateway }}_client_connections > 5
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: Possibly bouncing client(s).
+{% endfor %}
+{% for gateway in gateways %}
+  - alert: roq_{{ gateway }}_order_action_error
+    expr: roq_{{ gateway }}_order_action_error > 5
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: Possibly mis-behaving client(s).
 {% endfor %}
