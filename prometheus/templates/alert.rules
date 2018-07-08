@@ -2,8 +2,8 @@ groups:
 - name: example
   rules:
 {% for gateway in gateways %}
-  - alert: roq_{{ gateway }}_connection_error
-    expr: roq_{{ gateway }}_front_connection_delay > 10
+  - alert: roq_{{ gateway }}_connection
+    expr: roq_{{ gateway }}_connection_delay > 10
     for: 2m
     labels:
       severity: critical

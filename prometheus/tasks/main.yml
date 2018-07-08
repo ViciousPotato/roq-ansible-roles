@@ -8,6 +8,7 @@
   with_items:
     - "prom/prometheus"
     - "prom/node-exporter"
+    - "prom/alertmanager"
   tags:
   - prometheus
 
@@ -133,3 +134,79 @@
     enabled: yes
   tags:
   - prometheus
+
+####################
+### ALERTMANAGER ###
+####################
+
+- name: create config directory
+  become: true
+  file:
+    path: "/etc/alertmanager"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+  - restart alertmanager
+  tags:
+  - prometheus
+
+- name: create config file
+  become: true
+  template:
+    src: "templates/alertmanager.yml"
+    dest: "/etc/alertmanager/alertmanager.yml"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+  - restart alertmanager
+  tags:
+  - prometheus
+
+- name: create database directory
+  become: true
+  file:
+    path: "/var/lib/alertmanager"
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: 0777
+  notify:
+  - restart alertmanager
+  tags:
+  - prometheus
+
+- name: create systemd service
+  become: true
+  template:
+    src: "templates/alertmanager.service"
+    dest: "/etc/systemd/system/alertmanager.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: alertmanager_service
+  notify:
+  - restart alertmanager
+  tags:
+  - prometheus
+
+- name: service -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: alertmanager_service.changed
+  notify:
+  - restart alertmanager
+  tags:
+  - prometheus
+
+- name: enable service
+  become: true
+  service:
+    name: alertmanager
+    enabled: yes
+  tags:
+  - prometheus
+

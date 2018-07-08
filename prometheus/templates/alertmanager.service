@@ -1,0 +1,22 @@
+[Unit]
+Description=AlertManager
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull prom/alertmanager
+ExecStart=/usr/bin/docker run --rm --name %n \
+  --security-opt apparmor=unconfined \
+  --net host \
+  --volume /etc/alertmanager:/etc/alertmanager:ro \
+  --volume /var/lib/alertmanager:/var/lib/alertmanager \
+  prom/alertmanager \
+  --config.file="/etc/alertmanager/alertmanager.yml" \
+  --storage.path="/var/lib/alertmanager/"
+
+[Install]
+WantedBy=multi-user.target

@@ -5,3 +5,6 @@
 - name: restart node-exporter
   become: true
   service: name=node-exporter state=restarted enabled=yes
+- name: restart alertmanager
+  become: true
+  service: name=alertmanager state=restarted enabled=yes
