@@ -12,7 +12,7 @@ groups:
 {% endfor %}
 {% for gateway in gateways %}
   - alert: roq_{{ gateway }}_client_connections
-    expr: roq_{{ gateway }}_client_connections > 5
+    expr: rate(roq_{{ gateway }}_client_connections[30s]) > 0.1
     for: 2m
     labels:
       severity: critical
@@ -21,8 +21,8 @@ groups:
 {% endfor %}
 {% for gateway in gateways %}
   - alert: roq_{{ gateway }}_order_action_error
-    expr: roq_{{ gateway }}_order_action_error > 5
-    for: 2m
+    expr: rate(roq_{{ gateway }}_order_action_error[10s]) > 0.1
+    for: 1m
     labels:
       severity: critical
     annotations:
