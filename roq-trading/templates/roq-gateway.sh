@@ -38,7 +38,7 @@ case $TYPE in
   export ROQ_log_dir="$LOG_DIR"
   export ROQ_v=0
   export LD_PRELOAD="$CONDA_PREFIX/lib/libtcmalloc.so" 
-  /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
+  /usr/bin/daemon --respawn --umask 0002 --pidfile "$PIDFILE" --chdir "$CHDIR" --unsafe -- \
       "$CONDA_PREFIX/bin/roq-{{ item }}" \
       --socket-buffer-size 10485760 \
       --spin-usecs 1000 \
