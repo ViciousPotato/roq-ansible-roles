@@ -61,7 +61,7 @@
     state: directory
     owner: algo
     group: algo
-    mode: 0750
+    mode: 0770
   with_items:
   - /algo
   - /algo/config
