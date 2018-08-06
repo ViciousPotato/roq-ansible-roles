@@ -10,7 +10,7 @@ ExecStartPre=-/usr/bin/docker stop %n
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStartPre=/usr/bin/docker pull redis
 ExecStart=/usr/bin/docker run --rm --name %n \
-  ----security-opt apparmor=unconfined \
+  --security-opt apparmor=unconfined \
   --volume {{ redis_etc_dir }}/redis.conf:/usr/local/etc/redis/redis.conf:ro \
   --volume {{ redis_lib_dir }}:/data \
   --publish 6379:6379 \
