@@ -42,6 +42,7 @@ case $TYPE in
       "$CONDA_PREFIX/bin/roq-{{ item }}" \
       --socket-buffer-size 10485760 \
       --spin-usecs 1000 \
+      --timer-refresh-usecs 100 \
       --license-file "$LICENSE" \
       --config-variables "$VARIABLES" \
       --config-file "$CONFIG" \
