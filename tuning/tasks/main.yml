@@ -21,3 +21,37 @@
   - { name: "net.core.netdev_max_backlog", value: "300000" }
   tags:
   - tuning
+
+# https://askubuntu.com/questions/1021748/set-cpu-governor-to-performance-in-18-04
+
+- name: install cpufrequtils (debian)
+  become: true
+  apt:
+    name: cpufrequtils
+    state: present
+  when: ansible_os_family == "Debian"
+  tags:
+  - tuning
+  - cpufreq
+
+- name: configure cpufrequtils for performance (debian)
+  become: true
+  template: src="templates/cpufrequtils"
+    dest="/etc/default/cpufrequtils"
+    owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
+  notify:
+  - restart cpufrequtils
+  tags:
+  - tuning
+  - cpufreq
+
+- name: disable the ondemand service (debian)
+  become: true
+  service:
+    name: ondemand
+    state: stopped
+  when: ansible_os_family == "Debian"
+  tags:
+  - tuning
+  - cpufreq

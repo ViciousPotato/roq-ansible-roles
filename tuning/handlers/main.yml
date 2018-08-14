@@ -1,0 +1,7 @@
+---
+
+- name: restart cpufrequtils
+  become: true
+  service:
+    name: cpufrequtils
+    state: restarted
