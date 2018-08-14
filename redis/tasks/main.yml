@@ -1,7 +1,7 @@
 ---
-###############
-### NETDATA ###
-###############
+#############
+### REDIS ###
+#############
 
 - name: pull docker image
   become: true

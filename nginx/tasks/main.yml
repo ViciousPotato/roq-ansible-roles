@@ -4,6 +4,16 @@
 ### NGINX ###
 #############
 
+- name: docker pull images
+  become: true
+  docker_image:
+    name: "{{ item }}"
+    http_timeout: 300
+  with_items:
+    - "nginx"
+  tags:
+  - nginx
+
 - name: install nginx
   apt:
     name: nginx

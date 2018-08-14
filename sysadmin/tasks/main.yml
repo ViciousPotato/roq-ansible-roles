@@ -25,21 +25,33 @@
 ### SYSSTAT ###
 ###############
 
-- name: install tools
+- name: install tools (debian)
   become: true
   apt:
     name: sysstat
     state: present
+  when: ansible_os_family == "Debian"
   tags:
   - sysadmin
   - sysstat
 
-- name: enable sysstat
+- name: install tools (redhat)
+  become: true
+  yum:
+    name: sysstat
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+  - sysadmin
+  - sysstat
+
+- name: enable sysstat (debian)
   become: true
   replace:
     dest: '/etc/default/sysstat' 
     regexp: 'ENABLED="false"'
     replace: 'ENABLED="true"'
+  when: ansible_os_family == "Debian"
   notify:
     - restart sysstat
   tags:
@@ -50,7 +62,7 @@
 ### TOOLS ###
 #############
 
-- name: install tools
+- name: install tools (debian)
   become: true
   apt:
     name: "{{ item }}"
@@ -66,12 +78,49 @@
     - curl
     - vim
     - bash-completion
-    - mailutils
+    - mailutils  ###
     - traceroute
     - whois
-    - daemon
+    - daemon  ###
     - zip
     - unzip
+  when: ansible_os_family == "Debian"
+  tags:
+  - sysadmin
+  - tools
+
+- name: install tools (redhat)
+  become: true
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - htop
+    - iotop
+    - iftop
+    - nethogs
+    - dstat
+    - lsof
+    - wget
+    - curl
+    - vim
+    - bash-completion
+    - mailx  ###
+    - traceroute
+    - whois
+    - zip
+    - unzip
+  when: ansible_os_family == "RedHat"
+  tags:
+  - sysadmin
+  - tools
+
+- name: install libslack (redhat)
+  become: true
+  yum:
+    name: http://libslack.org/download/libslack-0.6-1.x86_64.rpm
+    state: present
+  when: ansible_os_family == "RedHat"
   tags:
   - sysadmin
   - tools
@@ -95,9 +144,10 @@
 ### UNATTENDED-UPGRADES ###
 ###########################
 
-- name: unattended-upgrades
+- name: unattended-upgrades (debian)
   apt:
     name: unattended-upgrades
     state: present
+  when: ansible_os_family == "Debian"
   tags:
   - sysadmin

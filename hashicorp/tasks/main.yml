@@ -1,0 +1,12 @@
+---
+
+- name: pull docker images
+  become: true
+  docker_image:
+    name: "{{ item }}"
+    http_timeout: 300
+  with_items:
+    - "consul"
+    - "vault"
+  tags:
+  - hashicorp

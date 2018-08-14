@@ -1,35 +1,101 @@
 ---
+
+###########
+### APT ###
+###########
+
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 
-- name: apt gpg key add docker
+- name: add docker gpg key (debian)
   become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+  when: ansible_os_family == "Debian"
   tags:
   - docker
 
-- name: find ubuntu version
+- name: find ubuntu version (debian)
   command: "/usr/bin/lsb_release -cs"
   register: ubuntu_version
+  when: ansible_os_family == "Debian"
   tags:
   - docker
 
-- name: apt repository add docker
+- name: add docker repository (debian)
   become: true
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_version.stdout }} stable"
     state: present
+  when: ansible_os_family == "Debian"
   tags:
   - docker
 
-- name: apt install docker-ce
+- name: install docker-ce (debian)
   become: true
   apt:
     name: docker-ce
     update_cache: yes
+  when: ansible_os_family == "Debian"
+  notify:
+  - start docker
   tags:
   - docker
+
+###########
+### YUM ###
+###########
+
+# https://docs.docker.com/install/linux/docker-ce/centos/#install-docker-ce
+
+- name: install dependencies (redhat)
+  become: true
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+  when: ansible_os_family == "RedHat"
+  tags:
+  - docker
+
+- name: add docker gpg key (redhat)
+  become: true
+  rpm_key:
+    key: https://download.docker.com/linux/centos/gpg
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+  - docker
+
+- name: add docker-ce repo (redhat)
+  become: true
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    force: yes
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_os_family == "RedHat"
+  tags:
+  - docker
+
+- name: install docker-ce (redhat)
+  become: true
+  yum:
+    name: docker-ce
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+  tags:
+  - docker
+
+###########
+### PIP ###
+###########
 
 # otherwise (ansible) docker_image will fail...
 - name: pip install docker-py
@@ -37,17 +103,5 @@
   pip:
     name: docker-py
     state: latest
-  tags:
-  - docker
-
-- name: docker pull images
-  become: true
-  docker_image:
-    name: "{{ item }}"
-    http_timeout: 300
-  with_items:
-    - "consul"
-    - "nginx"
-    - "vault"
   tags:
   - docker

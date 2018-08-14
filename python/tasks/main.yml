@@ -1,8 +1,18 @@
 ---
-- name: apt install python-setuptools
+
+- name: apt install python-setuptools (debian)
   become: true
   apt:
     name: python-setuptools
+  when: ansible_os_family == "Debian"
+  tags:
+  - python
+
+- name: apt install python-setuptools (redhat)
+  become: true
+  yum:
+    name: python-setuptools
+  when: ansible_os_family == "RedHat"
   tags:
   - python
 
