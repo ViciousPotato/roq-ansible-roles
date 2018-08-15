@@ -47,6 +47,10 @@
   tags:
   - roq-trading
 
+##############
+### CONFIG ###
+##############
+
 - name: create config directory per gateway
   become: true
   file:
@@ -82,11 +86,24 @@
   tags:
   - roq-trading
 
-- name: create daemon control scripts for gateways
+# - name: create scripts to start gateways
+#   become: true
+#   template:
+#     src: "templates/roq-gateway.sh"
+#     dest: "/trading/bin/roq-{{ item }}.sh"
+#     owner: trading
+#     group: trading
+#     mode: 0750
+#   with_items:
+#     - "{{ gateways }}"
+#   tags:
+#   - roq-trading
+# 
+- name: NEW NEW NEW create scripts to start gateways
   become: true
   template:
-    src: "templates/roq-gateway.sh"
-    dest: "/trading/bin/roq-{{ item }}.sh"
+    src: "templates/roq-gateway-new.sh"
+    dest: "/trading/bin/roq-{{ item }}-new.sh"
     owner: trading
     group: trading
     mode: 0750
@@ -108,36 +125,194 @@
   tags:
   - roq-trading
 
-# TODO: change user to trading
-# TODO: time-zones ???
+###############
+### CRONTAB ###
+###############
 
-- name: create crontab entries for starting gateways
+# - name: create crontab entries for starting gateways
+#   become: true
+#   cron:
+#     name: "roq-{{ item }}-start"
+#     weekday: "1-5"
+#     hour: 9
+#     minute: 14
+#     job: "/trading/bin/roq-{{ item }}.sh start >/dev/null 2>&1"
+#     user: trading
+#   with_items:
+#     - "{{ gateways }}"
+#   tags:
+#   - roq-trading
+# 
+# - name: create crontab entries for stopping gateway
+#   become: true
+#   cron:
+#     name: "roq-{{ item }}-stop"
+#     weekday: "1-5"
+#     hour: 15
+#     minute: 16
+#     job: "/trading/bin/roq-{{ item }}.sh stop >/dev/null 2>&1"
+#     user: trading
+#   with_items:
+#     - "{{ gateways }}"
+#   tags:
+#   - roq-trading
+
+###############
+### SYSTEMD ###
+###############
+
+# https://unix.stackexchange.com/questions/265704/start-stop-a-systemd-service-at-specific-times
+
+- name: create systemd service
   become: true
-  cron:
-    name: "roq-{{ item }}-start"
-    weekday: "1-5"
-    hour: 9
-    minute: 14
-    job: "/trading/bin/roq-{{ item }}.sh start >/dev/null 2>&1"
-    user: trading
+  template:
+    src: "templates/roq-gateway-stop.service"
+    dest: "/etc/systemd/system/roq-{{ item }}-stop.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: gateway_stop_service
   with_items:
     - "{{ gateways }}"
   tags:
   - roq-trading
 
-- name: create crontab entries for stopping gateway
+- name: service -> systemctl daemon-reload
   become: true
-  cron:
-    name: "roq-{{ item }}-stop"
-    weekday: "1-5"
-    hour: 15
-    minute: 16
-    job: "/trading/bin/roq-{{ item }}.sh stop >/dev/null 2>&1"
-    user: trading
+  shell: systemctl daemon-reload
+  when: gateway_stop_service.changed
+  tags:
+  - roq-trading
+
+- name: disable gateway service
+  become: true
+  service:
+    name: roq-{{ item }}-stop
+    enabled: no
   with_items:
     - "{{ gateways }}"
   tags:
   - roq-trading
+
+- name: create systemd timer
+  become: true
+  template:
+    src: "templates/roq-gateway-stop.timer"
+    dest: "/etc/systemd/system/roq-{{ item }}-stop.timer"
+    owner: root
+    group: root
+    mode: 0644
+  register: gateway_stop_timer
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+- name: timer -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: gateway_stop_timer.changed
+  tags:
+  - roq-trading
+
+- name: enable gateway timer
+  become: true
+  service:
+    name: roq-{{ item }}-stop.timer
+    enabled: yes
+    state: started
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+# - name: start systemd timer
+#   become: true
+#   service:
+#     name: roq-{{ item }}-stop.timer
+#     state: started
+#   when: gateway_timer.changed
+#   with_items:
+#     - "{{ gateways }}"
+#   tags:
+#   - roq-trading
+
+- name: create systemd service
+  become: true
+  template:
+    src: "templates/roq-gateway.service"
+    dest: "/etc/systemd/system/roq-{{ item }}.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: gateway_service
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+- name: service -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: gateway_service.changed
+  tags:
+  - roq-trading
+
+- name: disable gateway service
+  become: true
+  service:
+    name: roq-{{ item }}
+    enabled: no
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+- name: create systemd timer
+  become: true
+  template:
+    src: "templates/roq-gateway.timer"
+    dest: "/etc/systemd/system/roq-{{ item }}.timer"
+    owner: root
+    group: root
+    mode: 0644
+  register: gateway_timer
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+- name: timer -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: gateway_timer.changed
+  tags:
+  - roq-trading
+
+- name: enable gateway timer
+  become: true
+  service:
+    name: roq-{{ item }}.timer
+    enabled: yes
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+- name: start systemd timer
+  become: true
+  service:
+    name: roq-{{ item }}.timer
+    state: started
+  when: gateway_timer.changed
+  with_items:
+    - "{{ gateways }}"
+  tags:
+  - roq-trading
+
+#################
+### COLLECTOR ###
+#################
 
 - name: create daemon control script for collector
   become: true

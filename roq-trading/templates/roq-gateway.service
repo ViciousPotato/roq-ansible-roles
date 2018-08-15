@@ -1,0 +1,18 @@
+[Unit]
+Description=Roq {{ item }} gateway service
+After=network-online.target
+Conflicts=roq-{{ item }}-stop.service
+
+[Service]
+User=trading
+Group=trading
+Restart=on-abnormal
+UMask=0002
+CPUAffinity=0-11
+CPUSchedulingPolicy=fifo
+PIDFile=/trading/run/.{{ item }}.pid
+WorkingDirectory=/trading/run/{{ item}}
+ExecStart=/trading/bin/roq-{{ item }}-new.sh
+
+[Install]
+WantedBy=multi-user.target
