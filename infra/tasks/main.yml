@@ -70,49 +70,51 @@
   tags:
   - infra
 
-# FIXME(thraneh): this will fail if ansible_user has just been added to the trading group... unsure how to refresh
+- name: create directories for conda
+  become: true
+  become_user: trading
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=rx,g+s
+  with_items:
+  - /home/trading/.conda
+  - /home/trading/.conda/pkgs
+  tags:
+  - infra
+
+- name: create files for conda
+  become: true
+  become_user: trading
+  file:
+    path: /home/trading/.conda/environments.txt
+    state: touch
+    mode: "u=rw,g=rw,o=r"
+  tags:
+  - infra
+
 - name: create conda3 environment
   become: true
-  shell: /usr/local/bin/Miniconda3-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda3
+  become_user: trading
+  shell: "/usr/local/bin/Miniconda3-latest-Linux-x86_64.sh -b -p /trading/infra/miniconda3"
   args:
     creates: "/trading/infra/miniconda3"
   tags:
   - infra
 
-- name: set miniconda3 ownership
-  become: true
-  file:
-    path: "/trading/infra/miniconda3"
-    owner: trading
-    group: trading
-    mode: "g+w"
-    recurse: yes
-  tags:
-  - infra
-
 - name: create .condarc in the conda3 environment
   become: true
+  become_user: trading
   template:
     src: "templates/condarc"
     dest: "/trading/infra/miniconda3/.condarc"
-    owner: trading
-    group: trading
     mode: 0644
   tags:
   - infra
 
 - name: update conda3 to latest
-  shell: /trading/infra/miniconda3/bin/conda update -n root conda
-  tags:
-  - infra
-
-- name: set miniconda3 ownership
   become: true
-  file:
-    path: "/trading/infra/miniconda3"
-    owner: trading
-    group: trading
-    mode: "g+w"
-    recurse: yes
+  become_user: trading
+  shell: "/trading/infra/miniconda3/bin/conda update -n root conda"
   tags:
   - infra

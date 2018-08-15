@@ -4,6 +4,26 @@
 ### ONLOAD ###
 ##############
 
+- name: get kernel release version (redhat)
+  shell: "uname -r"
+  ignore_errors: true
+  register: kernel_release_version
+  when: ansible_os_family == "RedHat"
+  tags:
+    - onload
+
+- name: install build dependencies (redhat)
+  become: true
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - "kernel-devel-uname-r == {{ kernel_release_version.stdout }}"
+  - "@development"
+  when: ansible_os_family == "RedHat"
+  tags:
+    - onload
+
 - name: check driver
   shell: "lsmod | grep ^onload"
   register: onload_driver

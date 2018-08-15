@@ -1,5 +1,9 @@
 ---
 
+##############
+### DOCKER ###
+##############
+
 - name: docker pull images
   become: true
   docker_image:
@@ -11,7 +15,9 @@
   tags:
   - roq-trading
 
-
+#############
+### CONDA ###
+#############
 
 - name: create conda environment file
   become: true
@@ -25,6 +31,8 @@
   - roq-trading
 
 - name: test existence of the roq conda environment
+  become: true
+  become_user: trading
   shell: /trading/infra/miniconda3/bin/conda env list | grep "^roq "
   register: conda_roq
   failed_when: ( conda_roq.rc not in [ 0, 1 ] )
@@ -32,19 +40,10 @@
   - roq-trading
 
 - name: create the roq conda environment
+  become: true
+  become_user: trading
   shell: /trading/infra/miniconda3/bin/conda env create -f /trading/infra/conda-environment.yml
   when: conda_roq.rc == 1
-  tags:
-  - roq-trading
-
-- name: set miniconda3 ownership
-  become: true
-  file:
-    path: "/trading/infra/miniconda3"
-    owner: trading
-    group: trading
-    mode: "g+w"
-    recurse: yes
   tags:
   - roq-trading
 

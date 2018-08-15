@@ -90,6 +90,8 @@
     state: present
     update_cache: yes
   when: ansible_os_family == "RedHat"
+  notify:
+  - start docker
   tags:
   - docker
 

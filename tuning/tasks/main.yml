@@ -55,3 +55,5 @@
   tags:
   - tuning
   - cpufreq
+
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/power_management_guide/cpufreq_setup
