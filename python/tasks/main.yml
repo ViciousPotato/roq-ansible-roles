@@ -1,14 +1,21 @@
 ---
 
-- name: apt install python-setuptools (debian)
+###########
+### PIP ###
+###########
+
+- name: install pip (debian)
   become: true
   apt:
-    name: python-setuptools
+    name: "{{ item }}"
+  with_items:
+    - python-setuptools
+    - python-pip
   when: ansible_os_family == "Debian"
   tags:
   - python
 
-- name: apt install python-setuptools (redhat)
+- name: install pip (redhat)
   become: true
   yum:
     name: python-setuptools
@@ -21,5 +28,6 @@
   easy_install:
     name: pip
     state: latest
+  when: ansible_os_family == "RedHat"
   tags:
   - python
