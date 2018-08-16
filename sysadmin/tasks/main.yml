@@ -1,25 +1,48 @@
 ---
 
-###################
-### TIMEDATECTL ###
-###################
+##############
+### CHRONY ###
+##############
 
-- name: test ntp
-  shell: bash -c '/usr/bin/timedatectl status | grep "Network time on. yes" > /dev/null'
-  register: timedatectl_ntp
-  changed_when: timedatectl_ntp.rc == 1
-  failed_when: timedatectl_ntp.rc > 1
-  tags:
-  - sysadmin
-  - timedatectl
-
-- name: enable ntp
+- name: install chrony (debian)
   become: true
-  command: /usr/bin/timedatectl set-ntp true
-  when: timedatectl_ntp.rc != 0
+  apt:
+    name: chrony
+    state: present
+  when: ansible_os_family == "Debian"
   tags:
   - sysadmin
-  - timedatectl
+  - chrony
+
+- name: install chrony (redhat)
+  become: true
+  yum:
+    name: chrony
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+  - sysadmin
+  - chrony
+
+- name: start chrony service
+  become: true
+  systemd:
+    name: "chrony"
+    enabled: true
+  when: ansible_os_family == "Debian"
+  tags:
+  - sysadmin
+  - chrony
+
+- name: start chrony service
+  become: true
+  systemd:
+    name: "chronyd"
+    enabled: true
+  when: ansible_os_family == "RedHat"
+  tags:
+  - sysadmin
+  - chrony
 
 ###############
 ### SYSSTAT ###
@@ -78,12 +101,11 @@
     - curl
     - vim
     - bash-completion
-    - mailutils  ###
     - traceroute
     - whois
-    - daemon  ###
     - zip
     - unzip
+    - mailutils  ###
   when: ansible_os_family == "Debian"
   tags:
   - sysadmin
@@ -105,21 +127,11 @@
     - curl
     - vim
     - bash-completion
-    - mailx  ###
     - traceroute
     - whois
     - zip
     - unzip
-  when: ansible_os_family == "RedHat"
-  tags:
-  - sysadmin
-  - tools
-
-- name: install libslack (redhat)
-  become: true
-  yum:
-    name: http://libslack.org/download/libslack-0.6-1.x86_64.rpm
-    state: present
+    - mailx  ###
   when: ansible_os_family == "RedHat"
   tags:
   - sysadmin
@@ -139,15 +151,3 @@
   tags:
   - sysadmin
   - bash
-
-###########################
-### UNATTENDED-UPGRADES ###
-###########################
-
-- name: unattended-upgrades (debian)
-  apt:
-    name: unattended-upgrades
-    state: present
-  when: ansible_os_family == "Debian"
-  tags:
-  - sysadmin

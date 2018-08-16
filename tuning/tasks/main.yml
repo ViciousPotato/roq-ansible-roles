@@ -1,10 +1,14 @@
 ---
 
+###############
+### NETWORK ###
+###############
+
 # https://medium.com/@frjalex/linux-kernel-high-performance-networking-how-to-2d35f5900974
 # https://serverfault.com/questions/623780/low-latency-tcp-settings-on-ubuntu
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/2/html/Realtime_Tuning_Guide/index.html
 
-- name: update sysctl.conf (very aggressive settings)
+- name: kernel parameters for the network stack
   become: true
   sysctl:
     name: "{{ item.name }}"
@@ -19,10 +23,31 @@
   - { name: "net.ipv4.tcp_mem", value: "268754560 268754560 268754560" }
   - { name: "net.ipv4.udp_mem", value: "268754560 268754560 268754560" }
   - { name: "net.core.netdev_max_backlog", value: "300000" }
+  tags:
+  - tuning
+  - sysctl
+
+######################
+### CPU SCHEDULING ###
+######################
+
+# without this, we're not able to use the realtime scheduler from systemd (centos/7):
+# https://stackoverflow.com/questions/46563332/docker-daemon-container-real-time-scheduling-with-ubuntu-linux-host
+
+- name: kernel parameters for cpu scheduling
+  become: true
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
   - { name: "kernel.sched_rt_runtime_us", value: "-1" }
   tags:
   - tuning
   - sysctl
+
+#####################
+### CPU FREQUENCY ###
+#####################
 
 # https://askubuntu.com/questions/1021748/set-cpu-governor-to-performance-in-18-04
 
