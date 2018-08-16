@@ -19,8 +19,10 @@
   - { name: "net.ipv4.tcp_mem", value: "268754560 268754560 268754560" }
   - { name: "net.ipv4.udp_mem", value: "268754560 268754560 268754560" }
   - { name: "net.core.netdev_max_backlog", value: "300000" }
+  - { name: "kernel.sched_rt_runtime_us", value: "-1" }
   tags:
   - tuning
+  - sysctl
 
 # https://askubuntu.com/questions/1021748/set-cpu-governor-to-performance-in-18-04
 

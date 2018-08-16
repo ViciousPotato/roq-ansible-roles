@@ -2,11 +2,9 @@
 
 set -e
 
-# Configuration
 CONDA_DIR="/trading/infra/miniconda3"
 LOG_DIR="/trading/logs"
 SOCKET="/var/tmp/femasapi.sock"
-PIDFILE="/trading/run/.collector.pid"
 CHDIR="/trading/run/collector"
 DATE="$(date +%Y-%m-%d)"
 STDOUT="/trading/data/femasapi_$DATE.csv"
@@ -14,35 +12,9 @@ STDOUT="/trading/data/femasapi_$DATE.csv"
 USER="test"
 PASSWORD="1234"
 
-# Parse options
-while [[ $# -gt 0 ]]
-do
-key="$1"
-case $key in
-  start)
-  TYPE="start"
-  shift
-  ;;
-  stop)
-  TYPE="stop"
-  shift
-  ;;
-  *)
-  >&2 echo "unknown argument" && exit 1
-  ;;
-esac
-done
+source "$CONDA_DIR/bin/activate" roq
 
-# Daemonize
-case $TYPE in
-  start)
-  source "$CONDA_DIR/bin/activate" roq
-  export GLOG_log_dir="$LOG_DIR"
-  export GLOG_minloglevel=0
-  /usr/bin/daemon --respawn --pidfile "$PIDFILE" --chdir "$CHDIR" --stdout "$STDOUT" --unsafe \
-      -- "$CONDA_PREFIX/bin/roq-samples-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
-  ;;
-  stop)
-  /usr/bin/pkill -F "$PIDFILE" >/dev/null 2>&1
-  ;;
-esac
+export ROQ_log_dir="$LOG_DIR"
+export ROQ_v=0
+
+"$CONDA_PREFIX/bin/roq-samples-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"

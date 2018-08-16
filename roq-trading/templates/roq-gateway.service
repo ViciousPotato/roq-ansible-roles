@@ -8,11 +8,12 @@ User=trading
 Group=trading
 Restart=on-abnormal
 UMask=0002
-CPUAffinity=0-11
+{% if femasapi.cpu_affinity is defined %}
+CPUAffinity={{ femasapi.cpu_affinity }}
+{% endif %}
 CPUSchedulingPolicy=fifo
-PIDFile=/trading/run/.{{ item }}.pid
-WorkingDirectory=/trading/run/{{ item}}
-ExecStart=/trading/bin/roq-{{ item }}-new.sh
+WorkingDirectory=/trading/run/{{ item }}
+ExecStart=/trading/bin/roq-{{ item }}.sh
 
 [Install]
 WantedBy=multi-user.target

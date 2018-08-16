@@ -1,0 +1,19 @@
+[Unit]
+Description=Roq collector service
+After=network-online.target
+Conflicts=roq-collector-stop.service
+
+[Service]
+User=trading
+Group=trading
+Restart=on-abnormal
+UMask=0002
+{% if collector.cpu_affinity is defined %}
+CPUAffinity={{ collector.cpu_affinity }}
+{% endif %}
+CPUSchedulingPolicy=fifo
+WorkingDirectory=/trading/run
+ExecStart=/trading/bin/roq-collector.sh
+
+[Install]
+WantedBy=multi-user.target
