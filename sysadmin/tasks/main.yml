@@ -164,7 +164,8 @@
     state: present
   when: ansible_os_family == "RedHat"
   tags:
-  - baseline
+  - sysadmin
+  - firewalld
 
 - name: enable firewalld (redhat)
   become: true
@@ -174,4 +175,5 @@
     daemon_reload: true
   when: ansible_os_family == "RedHat"
   tags:
-  - baseline
+  - sysadmin
+  - firewalld
