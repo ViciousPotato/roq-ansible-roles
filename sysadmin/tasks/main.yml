@@ -132,6 +132,7 @@
     - zip
     - unzip
     - mailx  ###
+    - net-tools  ### ifconfig
   when: ansible_os_family == "RedHat"
   tags:
   - sysadmin
@@ -151,3 +152,26 @@
   tags:
   - sysadmin
   - bash
+
+################
+### FIREWALL ###
+################
+
+- name: install firewalld (redhat)
+  become: true
+  yum:
+    name: firewalld
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+  - baseline
+
+- name: enable firewalld (redhat)
+  become: true
+  systemd:
+    name: firewalld
+    enabled: true
+    daemon_reload: true
+  when: ansible_os_family == "RedHat"
+  tags:
+  - baseline
