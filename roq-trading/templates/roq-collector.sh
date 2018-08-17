@@ -17,4 +17,4 @@ source "$CONDA_DIR/bin/activate" roq
 export ROQ_log_dir="$LOG_DIR"
 export ROQ_v=0
 
-"$CONDA_PREFIX/bin/roq-samples-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET"
+"$CONDA_PREFIX/bin/roq-samples-collector" --gateways "femasapi=$USER:$PASSWORD@$SOCKET" >> "$STDOUT"
