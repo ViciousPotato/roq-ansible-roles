@@ -19,6 +19,11 @@
   tags:
   - baseline
 
+# TODO(thraneh):
+# https://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/
+# wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+# rpm -ivh epel-release-latest-7.noarch.rpm
+
 - name: install epel-release (redhat)
   become: true
   yum:
