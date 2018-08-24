@@ -14,30 +14,58 @@
   tags:
   - nginx
 
-- name: install nginx
-  apt:
-    name: nginx
-    state: latest
-  tags:
-  - nginx
-
-- name: create dist site
+- name: available sites
   template:
-    src: "templates/dist"
-    dest: "/etc/nginx/sites-available/dist"
+    src: "templates/{{ item }}"
+    dest: "/etc/nginx/sites-available/{{ item }}"
     owner: root
     mode: 0644
+  with_items:
+    - dist
   notify:
     - reload nginx
   tags:
   - nginx
 
-- name: enable dist site
+- name: enable sites
   file:
-    src: "/etc/nginx/sites-available/dist"
-    dest: "/etc/nginx/sites-enabled/dist"
+    src: "/etc/nginx/sites-available/{{ item }}"
+    dest: "/etc/nginx/sites-enabled/{{ item }}"
     state: link
+  with_items:
+    - dist
   notify:
     - reload nginx
+  tags:
+  - nginx
+
+- name: create systemd service
+  become: true
+  template:
+    src: "templates/nginx.service"
+    dest: "/etc/systemd/system/nginx.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: nginx_service
+  notify:
+  - restart nginx
+  tags:
+  - nginx
+
+- name: service -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: nginx_service.changed
+  notify:
+  - restart nginx
+  tags:
+  - nginx
+
+- name: enable service
+  become: true
+  service:
+    name: nginx
+    enabled: yes
   tags:
   - nginx

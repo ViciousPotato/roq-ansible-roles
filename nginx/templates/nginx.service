@@ -1,0 +1,20 @@
+[Unit]
+Description=Nginx
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull nginx
+ExecStart=/usr/bin/docker run --rm --name %n -i \
+  --security-opt apparmor=unconfined \
+  --net host \
+  --pid host \
+  --volume /etc/nginx:/etc/nginx:ro \
+  nginx
+
+[Install]
+WantedBy=multi-user.target
