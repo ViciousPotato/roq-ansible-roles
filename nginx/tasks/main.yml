@@ -14,6 +14,22 @@
   tags:
   - nginx
 
+- name: create directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - "/var/www"
+    - "/var/www/html"
+    - "/etc/nginx"
+    - "/etc/nginx/conf.d"
+  tags:
+  - nginx
+
 - name: index.html
   template:
     src: "templates/index.html"
@@ -26,23 +42,11 @@
 - name: available sites
   template:
     src: "templates/{{ item }}"
-    dest: "/etc/nginx/sites-available/{{ item }}"
+    dest: "/etc/nginx/conf.d/{{ item }}"
     owner: root
     mode: 0644
   with_items:
-    - dist
-  notify:
-    - reload nginx
-  tags:
-  - nginx
-
-- name: enable sites
-  file:
-    src: "/etc/nginx/sites-available/{{ item }}"
-    dest: "/etc/nginx/sites-enabled/{{ item }}"
-    state: link
-  with_items:
-    - dist
+    - roq.conf
   notify:
     - reload nginx
   tags:

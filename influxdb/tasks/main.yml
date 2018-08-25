@@ -1,0 +1,58 @@
+---
+
+################
+### INFLUXDB ###
+################
+
+- name: create database directory
+  become: true
+  file:
+    path: "/var/lib/influxdb"
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: 0777
+  notify:
+  - restart influxdb
+  tags:
+  - influxdb
+
+- name: pull docker image
+  become: true
+  docker_image:
+    name: "influxdb"
+    http_timeout: 300
+  tags:
+  - influxdb
+
+- name: create systemd service
+  become: true
+  template:
+    src: "templates/influxdb.service"
+    dest: "/etc/systemd/system/influxdb.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: influxdb_service
+  notify:
+  - restart influxdb
+  tags:
+  - influxdb
+
+- name: service -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: influxdb_service.changed
+  notify:
+  - restart influxdb
+  tags:
+  - influxdb
+
+- name: enable service
+  become: true
+  service:
+    name: influxdb
+    enabled: yes
+  tags:
+  - influxdb
