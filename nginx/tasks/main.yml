@@ -22,7 +22,6 @@
     mode: 0644
   tags:
   - nginx
-  - hans
 
 - name: available sites
   template:
@@ -36,7 +35,6 @@
     - reload nginx
   tags:
   - nginx
-  - hans
 
 - name: enable sites
   file:

@@ -6,6 +6,9 @@ Requires=docker.service
 [Service]
 TimeoutStartSec=0
 Restart=always
+{% if cpu_affinity is defined %}
+CPUAffinity={{ cpu_affinity.zone_2 }}
+{% endif %}
 ExecStartPre=-/usr/bin/docker stop %n
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStartPre=/usr/bin/docker pull titpetric/netdata

@@ -6,6 +6,9 @@ After=network-online.target
 [Service]
 TimeoutStartSec=0
 Restart=always
+{% if cpu_affinity is defined %}
+CPUAffinity={{ cpu_affinity.zone_3 }}
+{% endif %}
 ExecReload=/usr/bin/docker kill -s HUP %n
 ExecStartPre=-/usr/bin/docker stop %n
 ExecStartPre=-/usr/bin/docker rm %n
