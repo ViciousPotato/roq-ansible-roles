@@ -16,6 +16,14 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9100']
 
+  - job_name: 'netdata'
+    metrics_path: '/api/v1/allmetrics'
+    params:
+      format: [ prometheus ]
+    honor_labels: true
+    static_configs:
+      - targets: ['localhost:19999']
+
 {% for gateway in gateways %}
   - job_name: 'roq-{{ gateway }}'
     scrape_interval: 5s
