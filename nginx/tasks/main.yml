@@ -14,6 +14,16 @@
   tags:
   - nginx
 
+- name: index.html
+  template:
+    src: "templates/index.html"
+    dest: "/var/www/html/index.html"
+    owner: root
+    mode: 0644
+  tags:
+  - nginx
+  - hans
+
 - name: available sites
   template:
     src: "templates/{{ item }}"
@@ -26,6 +36,7 @@
     - reload nginx
   tags:
   - nginx
+  - hans
 
 - name: enable sites
   file:

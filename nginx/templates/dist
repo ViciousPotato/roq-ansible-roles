@@ -7,6 +7,11 @@ server {
 
   listen 127.0.0.1:80;
 
+  location = / {
+    root /var/www/html;
+    try_files /index.html = 404;
+  }
+
   location /dist/ {
     root /var/www;
   }
