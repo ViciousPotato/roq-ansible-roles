@@ -1,6 +1,6 @@
 upstream netdata {
-    server localhost:19999;
-    keepalive 64;
+  server localhost:19999;
+  keepalive 64;
 }
 
 server {
@@ -37,6 +37,10 @@ server {
     gzip on;
     gzip_proxied any;
     gzip_types *;
+  }
+
+  location /grafana/ {
+    proxy_pass http://localhost:3000/;
   }
 
 }

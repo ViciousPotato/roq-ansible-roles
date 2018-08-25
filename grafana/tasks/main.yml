@@ -1,0 +1,44 @@
+---
+
+###############
+### GRAFANA ###
+###############
+
+- name: pull docker image
+  become: true
+  docker_image:
+    name: "grafana/grafana"
+    http_timeout: 300
+  tags:
+  - grafana
+
+- name: create systemd service
+  become: true
+  template:
+    src: "templates/grafana.service"
+    dest: "/etc/systemd/system/grafana.service"
+    owner: root
+    group: root
+    mode: 0644
+  register: grafana_service
+  notify:
+  - restart grafana
+  tags:
+  - grafana
+
+- name: service -> systemctl daemon-reload
+  become: true
+  shell: systemctl daemon-reload
+  when: grafana_service.changed
+  notify:
+  - restart grafana
+  tags:
+  - grafana
+
+- name: enable service
+  become: true
+  service:
+    name: grafana
+    enabled: yes
+  tags:
+  - grafana
