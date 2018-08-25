@@ -4,6 +4,19 @@
 ### GRAFANA ###
 ###############
 
+- name: create data directory
+  become: true
+  file:
+    path: "/var/lib/grafana"
+    state: directory
+    owner: root
+    group: root
+    mode: 0777
+  notify:
+  - restart grafana
+  tags:
+  - grafana
+
 - name: pull docker image
   become: true
   docker_image:
