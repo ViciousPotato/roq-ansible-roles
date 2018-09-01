@@ -9,6 +9,7 @@
   apt:
     name: chrony
     state: present
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "Debian"
   tags:
   - sysadmin
@@ -19,6 +20,7 @@
   yum:
     name: chrony
     state: present
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   tags:
   - sysadmin
@@ -55,6 +57,7 @@
   apt:
     name: sysstat
     state: present
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "Debian"
   tags:
   - sysadmin
@@ -65,6 +68,7 @@
   yum:
     name: sysstat
     state: present
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   tags:
   - sysadmin
@@ -109,6 +113,7 @@
     - zip
     - unzip
     - mailutils  ###
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "Debian"
   tags:
   - sysadmin
@@ -119,6 +124,7 @@
   yum:
     name: "{{ item }}"
     state: present
+  environment: "{{proxy_env | default({})}}"
   with_items:
     - htop
     - iotop
@@ -166,6 +172,7 @@
   yum:
     name: firewalld
     state: present
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   tags:
   - sysadmin

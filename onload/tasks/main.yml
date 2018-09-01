@@ -17,6 +17,7 @@
   yum:
     name: "{{ item }}"
     state: latest
+  environment: "{{proxy_env | default({})}}"
   with_items:
   - "kernel-devel-uname-r == {{ kernel_release_version.stdout }}"
   - "@development"
@@ -48,6 +49,7 @@
     owner: root
     mode: 0644
     timeout: 300
+  environment: "{{proxy_env | default({})}}"
   tags:
     - onload
 

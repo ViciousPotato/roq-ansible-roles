@@ -8,6 +8,7 @@
   become: true
   apt:
     name: "{{ item }}"
+  environment: "{{proxy_env | default({})}}"
   with_items:
     - python-setuptools
     - python-pip
@@ -19,6 +20,7 @@
   become: true
   yum:
     name: python-setuptools
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   tags:
   - python
@@ -28,6 +30,7 @@
   easy_install:
     name: pip
     state: latest
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   tags:
   - python

@@ -2,6 +2,10 @@ global:
   smtp_smarthost: 'localhost:25'
   smtp_from: 'trading@localhost'
   smtp_require_tls: false
+  {% if proxy_env.http_proxy is defined %}
+  http_config:
+    proxy_url: '{{proxy_env.http_proxy}}'
+  {% endif %}
 
 route:
   group_by: ['instance', 'severity']
@@ -14,3 +18,5 @@ receivers:
   - name: 'team-1'
     email_configs:
     - to: 'root@localhost'
+
+

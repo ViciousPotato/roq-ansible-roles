@@ -9,6 +9,7 @@
   docker_image:
     name: "{{ item }}"
     http_timeout: 300
+  environment: "{{proxy_env | default({})}}"
   with_items:
     - "roqtrading/roq-femasapi"
     - "roqtrading/roq-samples"

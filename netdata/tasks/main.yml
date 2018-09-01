@@ -9,6 +9,7 @@
   docker_image:
     name: "titpetric/netdata"
     http_timeout: 300
+  environment: "{{proxy_env | default({})}}"
   tags:
   - netdata
 

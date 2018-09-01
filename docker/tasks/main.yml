@@ -36,6 +36,7 @@
   apt:
     name: docker-ce
     update_cache: yes
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "Debian"
   notify:
   - start docker
@@ -53,6 +54,7 @@
   yum:
     name: "{{ item }}"
     state: present
+  environment: "{{proxy_env | default({})}}"
   with_items:
     - yum-utils
     - device-mapper-persistent-data
@@ -83,6 +85,7 @@
     owner: root
     group: root
     mode: 0644
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   tags:
   - docker
@@ -93,6 +96,7 @@
     name: docker-ce
     state: present
     update_cache: yes
+  environment: "{{proxy_env | default({})}}"
   when: ansible_os_family == "RedHat"
   notify:
   - start docker
@@ -109,5 +113,6 @@
   pip:
     name: docker-py
     state: latest
+  environment: "{{proxy_env | default({})}}"
   tags:
   - docker
